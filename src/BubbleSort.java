@@ -7,14 +7,10 @@ public class BubbleSort {
             return;
         }
 
-        boolean sorted = false;
-
-        while(!sorted) {
-            sorted = true;
-            for (int i = 0; i < data.size() - 1; i++) {
-                if (data.get(i) > data.get(i + 1)) {
-                    swap(data, i);
-                    sorted = false;
+        for (int i = 0; i < data.size(); i++) {
+            for (int j = data.size() - 1; j > i; j--) {
+                if (data.get(j) < data.get(j - 1)) {
+                    swap(data, j);
                 }
             }
         }
@@ -22,7 +18,7 @@ public class BubbleSort {
 
     private void swap(ArrayList<Integer> data, int index) {
         int temp = data.get(index);
-        data.set(index, data.get(index + 1));
-        data.set(index + 1, temp);
+        data.set(index, data.get(index - 1));
+        data.set(index - 1, temp);
     }
 }

@@ -1,12 +1,12 @@
 import javax.swing.JFrame;
 import java.awt.Dimension;
 
-public class Frame extends JFrame {
-    public Frame() {
+public class MainFrame extends JFrame {
+    public MainFrame() {
         super("Sorting algorithm visualiser");
 
-        Panel panel = new Panel();
-        add(panel);
+        MainPanel mainPanel = new MainPanel();
+        add(mainPanel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1000, 1000));

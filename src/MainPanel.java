@@ -1,20 +1,37 @@
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static java.util.Collections.max;
 
-public class Panel extends JPanel {
+public class MainPanel extends JPanel implements ActionListener {
     private ArrayGenerator arrayGenerator;
     private ArrayList<Integer> data;
+    private BubbleSort bubbleSort;
 
-    public Panel() {
-        arrayGenerator = new ArrayGenerator();
-        int max = 100;
-        int size = 2;
-        data = arrayGenerator.generateRandomArray(size, max);
+    public MainPanel() {
+        bubbleSort = new BubbleSort(this);
+//        arrayGenerator = new ArrayGenerator();
+//        data = new ArrayList<>();
+//        int max = 100;
+//        int size = 2;
+//        data = arrayGenerator.generateRandomArray(size, max);
+
+        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+
+        JButton sortButton = new JButton("Sort");
+        sortButton.addActionListener(this);
+
+        setLayout(new BorderLayout());
+
+        add(sortButton, BorderLayout.PAGE_END);
     }
 
     @Override
@@ -23,7 +40,7 @@ public class Panel extends JPanel {
 
         g2.setColor(Color.BLACK);
 
-        int verticalSpace = 50;
+        int verticalSpace = 100;
         int maxBarHeight = getHeight() - verticalSpace;
         int maxValue = max(data);
         int x = 5, y = 0, spaceBetweenBars = 10;
@@ -32,6 +49,20 @@ public class Panel extends JPanel {
             int height = (int)(((double)data.get(i) / maxValue) * maxBarHeight);
             g2.fillRect(x, y, width, height);
             x += (width + spaceBetweenBars);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton buttonClicked = (JButton)e.getSource();
+
+        if(buttonClicked.getText() == "Sort") {
+            bubbleSort.sort(data);
+            for (int i = 0; i < data.size(); i++) {
+                System.out.println("Element " + i + ": " + data.get(i));
+            }
+            revalidate();
+            repaint();
         }
     }
 }

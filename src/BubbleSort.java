@@ -1,6 +1,8 @@
+import javax.swing.JPanel;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class BubbleSort {
+public class BubbleSort extends JPanel {
 
     public void sort(ArrayList<Integer> data) {
         if (data.isEmpty()) {
@@ -20,5 +22,10 @@ public class BubbleSort {
         int temp = data.get(index);
         data.set(index, data.get(index - 1));
         data.set(index - 1, temp);
+    }
+
+    @Override
+    public void paintComponent(Graphics graphics) {
+
     }
 }

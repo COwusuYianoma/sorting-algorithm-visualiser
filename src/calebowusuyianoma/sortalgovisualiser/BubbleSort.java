@@ -1,3 +1,5 @@
+package calebowusuyianoma.sortalgovisualiser;
+
 import java.util.ArrayList;
 
 public class BubbleSort {

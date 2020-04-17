@@ -9,8 +9,8 @@ public class MainFrame extends JFrame {
         add(mainPanel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(1000, 1000));
-        setLocationRelativeTo(null);
+        setPreferredSize(new Dimension(500, 500));
+//        setLocationRelativeTo(null); // TODO: decide whether to use this; it doesn't seem to be doing much ATM
         pack();
         setVisible(true);
     }

@@ -1,9 +1,9 @@
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -15,72 +15,77 @@ public class MainPanel extends JPanel implements ActionListener {
     private ArrayGenerator arrayGenerator;
     private ArrayList<Integer> data;
     private BubbleSort bubbleSort;
+    private Timer timer;
+    private int verticalSpace, spaceBetweenBars;
 
     public MainPanel() {
-        bubbleSort = new BubbleSort(this);
-//        arrayGenerator = new ArrayGenerator();
-//        data = new ArrayList<>();
-//        int max = 100;
-//        int size = 2;
-//        data = arrayGenerator.generateRandomArray(size, max);
+        bubbleSort = new BubbleSort();
+        timer = new Timer(200, this);
+        verticalSpace = 100;
+        spaceBetweenBars = 10;
 
-        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+        arrayGenerator = new ArrayGenerator();
+        int max = 100;
+        int size = 20;
+        data = arrayGenerator.generateRandomArray(size, max);
+
+//        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
 
         JButton sortButton = new JButton("Sort");
         sortButton.addActionListener(this);
-
         setLayout(new BorderLayout());
-
         add(sortButton, BorderLayout.PAGE_END);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+        super.paintComponent(g);
 
-        g2.setColor(Color.BLACK);
-
-        int verticalSpace = 100;
         int maxBarHeight = getHeight() - verticalSpace;
         int maxValue = max(data);
-        int x = 5, y = 0, spaceBetweenBars = 10;
+        int[] pointers = bubbleSort.getPointers();
+        int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
+            if(bubbleSort.isSorted()) {
+                g.setColor(Color.MAGENTA);
+            } else if(bubbleSort.isRunning() && contains(pointers, i)) {
+                g.setColor(Color.CYAN);
+            } else {
+                g.setColor(Color.BLACK);
+            }
+
             int height = (int)(((double)data.get(i) / maxValue) * maxBarHeight);
-            g2.fillRect(x, y, width, height);
+            g.fillRect(x, 0, width, height);
             x += (width + spaceBetweenBars);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton buttonClicked = (JButton)e.getSource();
-
-        if(buttonClicked.getText() == "Sort") {
-            bubbleSort.sort(data);
-            for (int i = 0; i < data.size(); i++) {
-                System.out.println("Element " + i + ": " + data.get(i));
-            }
-            revalidate();
-            repaint();
+        if (bubbleSort.isRunning() && !bubbleSort.justRanSwap()) {
+            bubbleSort.swap(data);
         }
+
+        if(bubbleSort.isRunning() && bubbleSort.justRanSwap()) {
+            bubbleSort.adjustPointers(data);
+        }
+
+        if(!bubbleSort.isRunning() && e.getActionCommand() != null) {
+            if (e.getActionCommand().equals("Sort")) {
+                bubbleSort.adjustPointers(data);
+                timer.start();
+            }
+        }
+
+        if(bubbleSort.isSorted()) {
+            timer.stop();
+        }
+
+        repaint();
+    }
+
+    private boolean contains(int[] arr, final int key) {
+        return Arrays.stream(arr).anyMatch(i -> i == key);
     }
 }
-
-//    private double proportionOfPanelWidthOccupiedByBars = (double)4 / 6;
-
-//        for (int i = 0; i < data.size(); i++) {
-//            System.out.println("Element at index " + i + " is: " + data.get(i));
-//        }
-
-//        double multiplier = (double)1 / data.size();
-//        int barLength = 25;
-//        int barWidth = (int)(multiplier * proportionOfPanelWidthOccupiedByBars * getWidth());
-
-//            int x = (int)((i * proportionOfPanelWidthOccupiedByBars) + (getWidth() * (double)1 / 6));
-//            int height = data.get(i) * barLength;
-//            System.out.println("proportionOfPanelWidthOccupiedByBars: " + proportionOfPanelWidthOccupiedByBars);
-//            System.out.println("x: " + x);
-//            System.out.println("barWidth: " + barWidth);
-//            System.out.println("height: " + height);
-//            g2.fillRect(x, 0, barWidth, height);

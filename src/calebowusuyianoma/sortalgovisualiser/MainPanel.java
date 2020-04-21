@@ -52,9 +52,25 @@ public class MainPanel extends JPanel implements ActionListener {
         int maxBarHeight = getHeight() - verticalSpace;
         int maxValue = max(data);
 
-        // Get pointers
-        // int[] pointers = bubbleSort.getPointers();
+        // Bubble sort
+//        int[] pointers = bubbleSort.getPointers();
+//        int x = 5;
+//        int width = (getWidth() / data.size()) - spaceBetweenBars;
+//        for (int i = 0; i < data.size(); i++) {
+//            if(bubbleSort.isSorted()) {
+//                g.setColor(Color.MAGENTA);
+//            } else if(bubbleSort.isRunning() && contains(pointers, i)) {
+//                g.setColor(Color.CYAN);
+//            } else {
+//                g.setColor(Color.BLACK);
+//            }
+//
+//            int height = (int)(((double)data.get(i) / maxValue) * maxBarHeight);
+//            g.fillRect(x, 0, width, height);
+//            x += (width + spaceBetweenBars);
+//        }
 
+        // Merge sort
         int currentTreeNode = data.size() - 1;
         Map<String, Integer> pointerMap = new HashMap<>();
         Map<Integer, Boolean> merged = new HashMap<>();
@@ -68,12 +84,8 @@ public class MainPanel extends JPanel implements ActionListener {
         int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
-            //if(bubbleSort.isSorted()) {
             if(mergeSort.isSorted()) {
-                System.out.println("The array is sorted");
-
                 g.setColor(Color.MAGENTA);
-                // } else if(bubbleSort.isRunning() && contains(pointers, i)) {
             } else if(mergeSort.isRunning() && merged.containsKey(currentTreeNode)) {
                 if(pointerMap.get(mergeSort.LOW) <= i && pointerMap.get(mergeSort.HIGH) >= i) {
                     g.setColor(Color.MAGENTA);
@@ -138,9 +150,6 @@ public class MainPanel extends JPanel implements ActionListener {
 
         if(!mergeSort.isRunning() && e.getActionCommand() != null) {
             if (e.getActionCommand().equals("Sort")) {
-                System.out.println("The Sort button was just clicked");
-                System.out.println();
-
                 timer.start();
                 mergeSort.adjustPointers(data);
             }

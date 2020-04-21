@@ -10,7 +10,7 @@ public class MergeSort {
     public static final String HIGH = "high";
 
     private boolean isRunning, isSorted, justCalculatedMiddle;
-    private int currentTreeNode, numberOfTreeNodes;
+    private int currentTreeNode;
     private Map<Integer, Map<String, Integer>> pointerMaps;
     private Map<String, Integer> currentPointerMap;
     private Map<Integer, Integer> parentNodes, numberOfTimesChildrenHaveBeenMerged;
@@ -48,25 +48,22 @@ public class MergeSort {
                 return;
             }
 
-            numberOfTreeNodes = (2 * data.size()) - 1;
-
-            currentTreeNode = calculateNodeValue(0, data.size() - 1);
-
-            pointerMaps = new HashMap<>(numberOfTreeNodes);
-            parentNodes = new HashMap<>(numberOfTreeNodes);
-            numberOfTimesChildrenHaveBeenMerged = new HashMap<>(numberOfTreeNodes);
-
             Map<String, Integer> pointerMap = new HashMap<>();
             pointerMap.put(LOW, 0);
             pointerMap.put(MIDDLE, Integer.MIN_VALUE);
             pointerMap.put(HIGH, data.size() - 1);
+
+            currentTreeNode = calculateNodeValue(0, data.size() - 1);
+            pointerMaps = new HashMap<>();
             pointerMaps.put(currentTreeNode, pointerMap);
 
+            parentNodes = new HashMap<>();
             parentNodes.put(currentTreeNode, 0);
 
+            numberOfTimesChildrenHaveBeenMerged = new HashMap<>();
             numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, 0);
 
-            merged = new HashMap<>(numberOfTreeNodes);
+            merged = new HashMap<>();
 
             isRunning = true;
         } else {
@@ -97,22 +94,14 @@ public class MergeSort {
                 justCalculatedMiddle = false;
             } else {
                 merged.put(currentTreeNode, true);
-
-                // Navigate to the parent node
                 currentTreeNode = parentNodes.get(currentTreeNode);
-                System.out.println("Just navigated back to parentNode: " + currentTreeNode);
-
                 int numberOfTimesChildrenMerged = numberOfTimesChildrenHaveBeenMerged.get(currentTreeNode);
 
-                // If children have been merged zero times, then we've just come from the left branch.
-                // So we'll go down the right branch.
                 if(numberOfTimesChildrenMerged == 0) {
                     numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, ++numberOfTimesChildrenMerged);
-
                     int previousTreeNode = currentTreeNode;
 
                     currentPointerMap = pointerMaps.get(currentTreeNode);
-
                     int currentMiddle = currentPointerMap.get(MIDDLE);
                     int currentHigh = currentPointerMap.get(HIGH);
                     int newLow = currentMiddle + 1;
@@ -126,10 +115,8 @@ public class MergeSort {
 
                     parentNodes.put(currentTreeNode, previousTreeNode);
                     numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, 0);
-                } else { // The only other case is that numberOfTimesChildrenMerged == 1
+                } else {
                     numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, ++numberOfTimesChildrenMerged);
-
-                    // Merge the sorted sub-arrays for this node
                     currentPointerMap = pointerMaps.get(currentTreeNode);
                     merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
                     merged.put(currentTreeNode, true);

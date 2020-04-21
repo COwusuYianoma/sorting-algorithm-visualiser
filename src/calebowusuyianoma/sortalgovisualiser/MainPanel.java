@@ -20,7 +20,7 @@ import static java.util.Collections.max;
 
 public class MainPanel extends JPanel implements ActionListener {
     private ArrayGenerator arrayGenerator;
-    private ArrayList<Integer> data;
+    private ArrayList<Integer> data, originalData;
     private Sort sort;
     private BubbleSort bubbleSort;
     private MergeSort mergeSort;
@@ -28,7 +28,10 @@ public class MainPanel extends JPanel implements ActionListener {
     private int verticalSpace, spaceBetweenBars;
     private final String defaultText = "Select a sorting algorithm";
     private String sortAlgorithm;
-    private boolean running;
+    private boolean running, justRan;
+    private String[] sortingAlgorithmsListText;
+    private JComboBox sortingAlgorithmsList;
+    private JButton sortButton, undoSortButton;
 
     public MainPanel() {
         timer = new Timer(100, this);
@@ -37,8 +40,12 @@ public class MainPanel extends JPanel implements ActionListener {
 
         arrayGenerator = new ArrayGenerator();
         int max = 100;
-        int size = 100;
+        int size = 10;
         data = arrayGenerator.generateRandomArray(size, max);
+        originalData = new ArrayList<>();
+        for(int i = 0; i < data.size(); i++) {
+            originalData.add(data.get(i));
+        }
 
         //data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
         //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
@@ -46,30 +53,40 @@ public class MainPanel extends JPanel implements ActionListener {
 
         JPanel panel = new JPanel();
 
-        JButton sortButton = new JButton("Sort");
+        sortingAlgorithmsListText = new String[] {defaultText, "Bubble sort", "Merge sort"};
+        sortingAlgorithmsList = new JComboBox(sortingAlgorithmsListText);
+        sortingAlgorithmsList.setSelectedIndex(0);
+        sortingAlgorithmsList.addActionListener(e -> {
+            String selectedAlgorithm = (String)sortingAlgorithmsList.getSelectedItem();
+            if(!running) {
+                setAlgorithm(selectedAlgorithm);
+            }
+        });
+
+        sortButton = new JButton("Sort");
         sortButton.addActionListener(this);
 
-        String[] sortingAlgorithms = {defaultText, "Bubble sort", "Merge sort"};
-        JComboBox sortingAlgorithmList = new JComboBox(sortingAlgorithms);
-        sortingAlgorithmList.setSelectedIndex(0);
-        sortingAlgorithmList.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String selectedAlgorithm = (String)sortingAlgorithmList.getSelectedItem();
-                if(!running) {
-                    System.out.println("Sort isn't running so going to set sort algo to: " + selectedAlgorithm);
-                    setAlgorithm(selectedAlgorithm);
+        undoSortButton = new JButton("Undo sort");
+        undoSortButton.addActionListener(e -> {
+            if(!running) {
+                if(justRan) {
+                    for(int i = 0; i < originalData.size(); i++) {
+                        data.set(i, originalData.get(i));
+                        justRan = false;
+                        repaint();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Please run a sorting algorithm!");
                 }
             }
         });
 
+        panel.add(sortingAlgorithmsList);
         panel.add(sortButton);
-        panel.add(sortingAlgorithmList);
+        panel.add(undoSortButton);
 
         setLayout(new BorderLayout());
         add(panel, BorderLayout.PAGE_END);
-
-        // add(sortButton, BorderLayout.PAGE_END);
-        // add(comboBox, BorderLayout.PAGE_END);
     }
 
     @Override
@@ -94,7 +111,12 @@ public class MainPanel extends JPanel implements ActionListener {
             int x = 5;
             int width = (getWidth() / data.size()) - spaceBetweenBars;
             for (int i = 0; i < data.size(); i++) {
-                g.setColor(Color.BLACK);
+                if(justRan) {
+                    g.setColor(Color.MAGENTA);
+                } else {
+                    g.setColor(Color.BLACK);
+                }
+
                 int height = (int) (((double) data.get(i) / maxValue) * maxBarHeight);
                 g.fillRect(x, 0, width, height);
                 x += (width + spaceBetweenBars);
@@ -169,9 +191,11 @@ public class MainPanel extends JPanel implements ActionListener {
             switch(sortAlgorithm) {
                 case(BubbleSort.name):
                     actionPerformedBubbleSort(e);
+                    repaint();
                     break;
                 case(MergeSort.name):
                     actionPerformedMergeSort(e);
+                    repaint();
                     break;
                 default:
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
@@ -180,8 +204,6 @@ public class MainPanel extends JPanel implements ActionListener {
         } else {
             JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
         }
-
-        repaint();
     }
 
     private void actionPerformedBubbleSort(ActionEvent e) {
@@ -199,6 +221,7 @@ public class MainPanel extends JPanel implements ActionListener {
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
                 } else {
                     timer.start();
+                    justRan = false;
                     bubbleSort.adjustPointers(data);
                     running = true;
                 }
@@ -209,6 +232,7 @@ public class MainPanel extends JPanel implements ActionListener {
             timer.stop();
             bubbleSort.setRunning(false);
             running = false;
+            justRan = true;
         }
 
         repaint();
@@ -219,6 +243,7 @@ public class MainPanel extends JPanel implements ActionListener {
             timer.stop();
             mergeSort.setRunning(false);
             running = false;
+            justRan = true;
 
             return;
         }
@@ -233,6 +258,13 @@ public class MainPanel extends JPanel implements ActionListener {
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
                 } else {
                     timer.start();
+                    justRan = false;
+
+                    for(int i = 0; i < data.size(); i++) {
+                        System.out.println("Element " + i + " of data is: " + data.get(i));
+                    }
+                    System.out.println();
+
                     mergeSort.adjustPointers(data);
                     running = true;
                 }
@@ -255,6 +287,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 sortAlgorithm = selectedAlgorithm;
                 break;
             default:
+                sortAlgorithm = selectedAlgorithm;
                 break;
         }
     }

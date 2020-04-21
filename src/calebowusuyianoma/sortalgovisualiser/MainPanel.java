@@ -32,7 +32,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
         arrayGenerator = new ArrayGenerator();
         int max = 100;
-        int size = 50;
+        int size = 100;
         data = arrayGenerator.generateRandomArray(size, max);
 
         //data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));

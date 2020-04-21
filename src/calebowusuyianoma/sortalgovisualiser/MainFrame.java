@@ -1,3 +1,5 @@
+package calebowusuyianoma.sortalgovisualiser;
+
 import javax.swing.JFrame;
 import java.awt.Dimension;
 

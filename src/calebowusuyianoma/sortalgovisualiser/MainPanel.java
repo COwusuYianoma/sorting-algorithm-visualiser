@@ -26,17 +26,18 @@ public class MainPanel extends JPanel implements ActionListener {
     public MainPanel() {
         bubbleSort = new BubbleSort();
         mergeSort = new MergeSort();
-        timer = new Timer(2000, this);
-        verticalSpace = 100;
-        spaceBetweenBars = 10;
+        timer = new Timer(100, this);
+        verticalSpace = 150;
+        spaceBetweenBars = 5;
 
-//        arrayGenerator = new ArrayGenerator();
-//        int max = 100;
-//        int size = 20;
-//        data = arrayGenerator.generateRandomArray(size, max);
+        arrayGenerator = new ArrayGenerator();
+        int max = 100;
+        int size = 50;
+        data = arrayGenerator.generateRandomArray(size, max);
 
-        // data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
+        //data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+        //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
+        // data = new ArrayList<>(Arrays.asList(7, 6, 5, 4, 3, 2, 1));
 
         JButton sortButton = new JButton("Sort");
         sortButton.addActionListener(this);
@@ -54,27 +55,14 @@ public class MainPanel extends JPanel implements ActionListener {
         // Get pointers
         // int[] pointers = bubbleSort.getPointers();
 
-        // int[] pointers = mergeSort.getPointers();
-        // int middlePointer = mergeSort.getMiddlePointer();
-        // int level;
         int currentTreeNode = data.size() - 1;
         Map<String, Integer> pointerMap = new HashMap<>();
         Map<Integer, Boolean> merged = new HashMap<>();
         if(mergeSort.isRunning()) {
-            //level = mergeSort.getLevel();
             currentTreeNode = mergeSort.getCurrentTreeNode();
             Map<Integer, Map<String, Integer>> pointerMaps = mergeSort.getPointerMaps();
-            //pointerMap = pointerMaps.get(level);
             pointerMap = pointerMaps.get(currentTreeNode);
-
             merged = mergeSort.getMerged();
-
-            //System.out.println("level: " + level);
-            System.out.println("currentTreeNode: " + currentTreeNode);
-            System.out.println("pointerMap.get(mergeSort.LOW): " + pointerMap.get(mergeSort.LOW));
-            System.out.println("pointerMap.get(mergeSort.MIDDLE): " + pointerMap.get(mergeSort.MIDDLE));
-            System.out.println("pointerMap.get(mergeSort.HIGH): " + pointerMap.get(mergeSort.HIGH));
-            System.out.println();
         }
 
         int x = 5;
@@ -86,14 +74,6 @@ public class MainPanel extends JPanel implements ActionListener {
 
                 g.setColor(Color.MAGENTA);
                 // } else if(bubbleSort.isRunning() && contains(pointers, i)) {
-//            } else if(mergeSort.isRunning() && mergeSort.justCalculatedMiddle() && middlePointer == i) {
-//                if(pointers[0] == middlePointer) {
-//                    g.setColor(Color.GREEN);
-//                } else {
-//                    g.setColor(Color.YELLOW);
-//                }
-                // } else if(mergeSort.isRunning() && contains(pointers, i)) {
-            //} else if(mergeSort.isRunning() && mergeSort.justCalledMerge()) {
             } else if(mergeSort.isRunning() && merged.containsKey(currentTreeNode)) {
                 if(pointerMap.get(mergeSort.LOW) <= i && pointerMap.get(mergeSort.HIGH) >= i) {
                     g.setColor(Color.MAGENTA);

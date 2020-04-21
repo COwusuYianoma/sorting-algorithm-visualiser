@@ -31,6 +31,15 @@ class MergeSortTest {
     }
 
     @Test
+    public void sortExecutesCorrectlyWhenDataContainsOneElement() {
+        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(6));
+        mergeSort.sort(data);
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(6));
+
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
     public void sortExecutesCorrectlyOnRandomData() {
         arrayGenerator = new ArrayGenerator();
         int size = 10, max = 100;

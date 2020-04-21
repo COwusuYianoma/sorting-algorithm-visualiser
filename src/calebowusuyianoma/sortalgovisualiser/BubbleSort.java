@@ -2,30 +2,27 @@ package calebowusuyianoma.sortalgovisualiser;
 
 import java.util.ArrayList;
 
-public class BubbleSort {
-    private boolean isRunning = false, justRanSwap = false, sorted = false;
+public class BubbleSort extends Sort {
+    private boolean justRanSwap;
     private int i = 0, j = 0;
+    public static final String name = "Bubble sort";
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
     public int[] getPointers() {
         return new int[] {i, j};
-    }
-
-    public boolean isRunning() {
-        return isRunning;
     }
 
     public boolean justRanSwap() {
         return justRanSwap;
     }
 
-    public boolean isSorted() {
-        return sorted;
-    }
-
     public void adjustPointers(ArrayList<Integer> data) {
         if (j == 0) {
             j = data.size() - 1;
-            isRunning = true;
+            running = true;
         } else if (j > i + 1) {
             j--;
             justRanSwap = false;

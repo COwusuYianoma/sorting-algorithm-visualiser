@@ -4,28 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MergeSort {
+public class MergeSort extends Sort {
+    public static final String name = "Merge sort";
     public static final String LOW = "low";
     public static final String MIDDLE = "middle";
     public static final String HIGH = "high";
 
-    private boolean isRunning, isSorted, justCalculatedMiddle;
+    private boolean justCalculatedMiddle;
     private int currentTreeNode;
     private Map<Integer, Map<String, Integer>> pointerMaps;
     private Map<String, Integer> currentPointerMap;
     private Map<Integer, Integer> parentNodes, numberOfTimesChildrenHaveBeenMerged;
     private Map<Integer, Boolean> merged;
 
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    public void setIsRunning(boolean isRunning) {
-        this.isRunning = isRunning;
-    }
-
-    public boolean isSorted() {
-        return isSorted;
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 
     public int getCurrentTreeNode() {
@@ -41,9 +34,9 @@ public class MergeSort {
     }
 
     public void adjustPointers(ArrayList<Integer> data) {
-        if(!isRunning) {
+        if(!running) {
             if(data.size() == 1) {
-                isSorted = true;
+                sorted = true;
 
                 return;
             }
@@ -65,7 +58,7 @@ public class MergeSort {
 
             merged = new HashMap<>();
 
-            isRunning = true;
+            running = true;
         } else {
             currentPointerMap = pointerMaps.get(currentTreeNode);
             if((currentPointerMap.get(LOW) < currentPointerMap.get(HIGH)) && !merged.containsKey(currentTreeNode)){
@@ -121,7 +114,7 @@ public class MergeSort {
                     merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
                     merged.put(currentTreeNode, true);
                     if(currentTreeNode == calculateNodeValue(0, data.size() - 1)) {
-                        isSorted = true;
+                        sorted = true;
                     }
                 }
             }

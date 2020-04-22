@@ -17,7 +17,7 @@ public class BubbleSort extends Sort {
     }
 
     public void adjustPointers(ArrayList<Integer> data) {
-        if (j == 0) {
+        if (!running() && j == 0) {
             j = data.size() - 1;
             setRunning(true);
         } else if (j > i + 1) {

@@ -25,6 +25,7 @@ public class MainPanel extends JPanel implements ActionListener {
     private final String defaultText = "Select a sorting algorithm";
 
     private int verticalSpace, spaceBetweenBars, max, size;
+    private long startTime, endTime, runningTime;
     private boolean sorting, sortingAlgorithmJustRan;
     private ArrayGenerator arrayGenerator;
     private ArrayList<Integer> data, originalData;
@@ -37,7 +38,7 @@ public class MainPanel extends JPanel implements ActionListener {
     private JButton generateArrayButton, sortButton, undoSortButton;
     private JPanel panel;
     private JSpinner spinner;
-    private JLabel label;
+    private JLabel spinnerLabel, runningTimeLabel;
     private SpinnerModel spinnerModel;
 
     public MainPanel() {
@@ -56,10 +57,10 @@ public class MainPanel extends JPanel implements ActionListener {
         //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
         // data = new ArrayList<>(Arrays.asList(7, 6, 5, 4, 3, 2, 1));
 
-        label = new JLabel("Array size: ");
+        spinnerLabel = new JLabel("Array size: ");
         spinnerModel = new SpinnerNumberModel(10, 2, 100, 1);
         spinner = new JSpinner(spinnerModel);
-        label.setLabelFor(spinner);
+        spinnerLabel.setLabelFor(spinner);
 
         generateArrayButton = new JButton("Generate random array");
         generateArrayButton.addActionListener(e -> {
@@ -68,6 +69,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 data = arrayGenerator.generateRandomArray(arraySize, max);
                 setOriginalData();
                 sortingAlgorithmJustRan = false;
+                resetRunningTime();
                 repaint();
             }
         });
@@ -96,6 +98,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
                     sortingAlgorithmJustRan = false;
                     setSortingAlgorithm(sortingAlgorithmSelected);
+                    resetRunningTime();
                     repaint();
                 } else {
                     JOptionPane.showMessageDialog(this, "Please run a sorting algorithm!");
@@ -103,13 +106,16 @@ public class MainPanel extends JPanel implements ActionListener {
             }
         });
 
+        runningTimeLabel = new JLabel("Running time: ");
+
         panel = new JPanel();
-        panel.add(label);
+        panel.add(spinnerLabel);
         panel.add(spinner);
         panel.add(generateArrayButton);
         panel.add(sortingAlgorithmsList);
         panel.add(sortButton);
         panel.add(undoSortButton);
+        panel.add(runningTimeLabel);
 
         setLayout(new BorderLayout());
         add(panel, BorderLayout.PAGE_END);
@@ -179,6 +185,17 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
+    private void resetRunningTime() {
+        runningTime = 0;
+        setRunningTimeLabel();
+    }
+
+    private void setRunningTimeLabel() {
+        String text = "Running time: "
+                + ((!sorting && sortingAlgorithmJustRan) ? (((double)runningTime / 1000) + " ms") : "");
+        runningTimeLabel.setText(text);
+    }
+
     private void actionPerformedBubbleSort(ActionEvent e) {
         if(bubbleSort.running() && !bubbleSort.justRanSwap()) {
             bubbleSort.swap(data);
@@ -192,19 +209,26 @@ public class MainPanel extends JPanel implements ActionListener {
             if (e.getActionCommand().equals("Sort")) {
                 bubbleSort.setSorted(false);
                 timer.start();
+                startTime = System.currentTimeMillis();
                 bubbleSort.adjustPointers(data);
                 sortingAlgorithmJustRan = false;
                 sorting = true;
+                resetRunningTime();
                 sortingAlgorithmRunning = BubbleSort.name;
             }
         }
 
         if(bubbleSort.running() && bubbleSort.sorted()) {
+            endTime = System.currentTimeMillis();
             timer.stop();
+            runningTime = endTime - startTime;
+            startTime = 0;
+            endTime = 0;
             bubbleSort.setRunning(false);
             sorting = false;
             sortingAlgorithmRunning = null;
             sortingAlgorithmJustRan = true;
+            setRunningTimeLabel();
         }
 
         repaint();
@@ -212,11 +236,16 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void actionPerformedMergeSort(ActionEvent e) {
         if(mergeSort.running() && mergeSort.sorted()) {
+            endTime = System.currentTimeMillis();
             timer.stop();
+            runningTime = endTime - startTime;
+            startTime = 0;
+            endTime = 0;
             mergeSort.setRunning(false);
             sorting = false;
             sortingAlgorithmRunning = null;
             sortingAlgorithmJustRan = true;
+            setRunningTimeLabel();
         }
 
         if(mergeSort.running()) {
@@ -227,9 +256,11 @@ public class MainPanel extends JPanel implements ActionListener {
             if (e.getActionCommand().equals("Sort")) {
                 mergeSort.setSorted(false);
                 timer.start();
+                startTime = System.currentTimeMillis();
                 mergeSort.adjustPointers(data);
                 sortingAlgorithmJustRan = false;
                 sorting = true;
+                resetRunningTime();
                 sortingAlgorithmRunning = MergeSort.name;
             }
         }

@@ -226,11 +226,15 @@ public class MainPanel extends JPanel implements ActionListener {
                 int sortingSpeed = source.getValue();
                 if(sortingSpeed == 0) {
                     timer.stop();
+                    long currentTime = System.currentTimeMillis();
+                    runningTime += currentTime - startTime;
+                    startTime = 0;
                 } else {
                     int delay = TIMER_DELAY_MULTIPLIER / sortingSpeed;
                     timer.setDelay(delay);
                     if(!timer.isRunning()) {
                         timer.start();
+                        startTime = System.currentTimeMillis();
                     }
                 }
             }
@@ -298,7 +302,7 @@ public class MainPanel extends JPanel implements ActionListener {
             }
             endTime = System.currentTimeMillis();
             timer.stop();
-            runningTime = endTime - startTime;
+            runningTime += endTime - startTime;
             startTime = 0;
             endTime = 0;
             bubbleSort.setRunning(false);
@@ -320,7 +324,7 @@ public class MainPanel extends JPanel implements ActionListener {
             }
             endTime = System.currentTimeMillis();
             timer.stop();
-            runningTime = endTime - startTime;
+            runningTime += endTime - startTime;
             startTime = 0;
             endTime = 0;
             mergeSort.setRunning(false);

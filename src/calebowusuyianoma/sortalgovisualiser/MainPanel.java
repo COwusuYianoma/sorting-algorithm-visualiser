@@ -1,16 +1,20 @@
 package calebowusuyianoma.sortalgovisualiser;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +26,11 @@ import java.util.Map;
 import static java.util.Collections.max;
 
 public class MainPanel extends JPanel implements ActionListener {
+    private final int SORTING_SPEED_SLIDER_MAJOR_TICK_SPACING = 50;
+    private final int SORTING_SPEED_SLIDER_MINOR_TICK_SPACING = 10;
+    private final int SORTING_SPEED_SLIDER_MINIMUM_VALUE = 0;
+    private final int SORTING_SPEED_SLIDER_INITIAL_VALUE = 50;
+    private final int SORTING_SPEED_SLIDER_MAXIMUM_VALUE = 100;
     private final String defaultText = "Select a sorting algorithm";
 
     private int verticalSpace, spaceBetweenBars, max, size;
@@ -36,9 +45,10 @@ public class MainPanel extends JPanel implements ActionListener {
     private String[] sortingAlgorithmsListText;
     private JComboBox sortingAlgorithmsList;
     private JButton generateArrayButton, sortButton, undoSortButton;
-    private JPanel panel;
-    private JSpinner spinner;
-    private JLabel spinnerLabel, runningTimeLabel;
+    private JPanel panel, sortingSpeedSliderPanel;
+    private JSpinner arraySizeSpinner;
+    private JLabel arraySizeSpinnerLabel, runningTimeLabel, sortingSpeedSliderLabel;
+    private JSlider sortingSpeedSlider;
     private SpinnerModel spinnerModel;
 
     public MainPanel() {
@@ -57,15 +67,17 @@ public class MainPanel extends JPanel implements ActionListener {
         //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
         // data = new ArrayList<>(Arrays.asList(7, 6, 5, 4, 3, 2, 1));
 
-        spinnerLabel = new JLabel("Array size: ");
+        panel = new JPanel();
+
+        arraySizeSpinnerLabel = new JLabel("Array size: ");
         spinnerModel = new SpinnerNumberModel(10, 2, 100, 1);
-        spinner = new JSpinner(spinnerModel);
-        spinnerLabel.setLabelFor(spinner);
+        arraySizeSpinner = new JSpinner(spinnerModel);
+        arraySizeSpinnerLabel.setLabelFor(arraySizeSpinner);
 
         generateArrayButton = new JButton("Generate random array");
         generateArrayButton.addActionListener(e -> {
             if(!sorting) {
-                int arraySize = (int)spinner.getValue();
+                int arraySize = (int) arraySizeSpinner.getValue();
                 data = arrayGenerator.generateRandomArray(arraySize, max);
                 setOriginalData();
                 sortingAlgorithmJustRan = false;
@@ -84,6 +96,34 @@ public class MainPanel extends JPanel implements ActionListener {
                 setSortingAlgorithm(selectedAlgorithm);
             }
         });
+
+        sortingSpeedSliderPanel = new JPanel();
+        sortingSpeedSliderPanel.setLayout(new BoxLayout(sortingSpeedSliderPanel, BoxLayout.PAGE_AXIS));
+
+        sortingSpeedSliderLabel = new JLabel("Sorting speed");
+        sortingSpeedSliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        sortingSpeedSlider = new JSlider(JSlider.HORIZONTAL, SORTING_SPEED_SLIDER_MINIMUM_VALUE,
+                SORTING_SPEED_SLIDER_MAXIMUM_VALUE, SORTING_SPEED_SLIDER_INITIAL_VALUE);
+        sortingSpeedSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sortingSpeedSlider.setMajorTickSpacing(SORTING_SPEED_SLIDER_MAJOR_TICK_SPACING);
+        sortingSpeedSlider.setMinorTickSpacing(SORTING_SPEED_SLIDER_MINOR_TICK_SPACING);
+        sortingSpeedSlider.setPaintTicks(true);
+        sortingSpeedSlider.setPaintLabels(true);
+        sortingSpeedSlider.setVisible(true);
+        sortingSpeedSlider.addChangeListener(e -> {
+            if(sorting) {
+                JSlider source = (JSlider) e.getSource();
+                if(!source.getValueIsAdjusting()) {
+
+                }
+                System.out.println(source.getValue());
+                sortingSpeedSlider.setValue(source.getValue());
+            }
+        });
+
+        sortingSpeedSliderPanel.add(sortingSpeedSliderLabel);
+        sortingSpeedSliderPanel.add(sortingSpeedSlider);
 
         sortButton = new JButton("Sort");
         sortButton.addActionListener(this);
@@ -108,11 +148,12 @@ public class MainPanel extends JPanel implements ActionListener {
 
         runningTimeLabel = new JLabel("Running time: ");
 
-        panel = new JPanel();
-        panel.add(spinnerLabel);
-        panel.add(spinner);
+        panel.setPreferredSize(new Dimension(1000, 70));
+        panel.add(arraySizeSpinnerLabel);
+        panel.add(arraySizeSpinner);
         panel.add(generateArrayButton);
         panel.add(sortingAlgorithmsList);
+        panel.add(sortingSpeedSliderPanel);
         panel.add(sortButton);
         panel.add(undoSortButton);
         panel.add(runningTimeLabel);
@@ -192,7 +233,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void setRunningTimeLabel() {
         String text = "Running time: "
-                + ((!sorting && sortingAlgorithmJustRan) ? (((double)runningTime / 1000) + " ms") : "");
+                + ((!sorting && sortingAlgorithmJustRan) ? (((double)runningTime / 1000) + " s") : "");
         runningTimeLabel.setText(text);
     }
 

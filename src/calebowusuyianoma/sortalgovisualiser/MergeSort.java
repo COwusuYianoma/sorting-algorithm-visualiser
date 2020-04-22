@@ -17,10 +17,6 @@ public class MergeSort extends Sort {
     private Map<Integer, Integer> parentNodes, numberOfTimesChildrenHaveBeenMerged;
     private Map<Integer, Boolean> merged;
 
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
     public int getCurrentTreeNode() {
         return currentTreeNode;
     }
@@ -34,9 +30,9 @@ public class MergeSort extends Sort {
     }
 
     public void adjustPointers(ArrayList<Integer> data) {
-        if(!running) {
+        if(!running()) {
             if(data.size() == 1) {
-                sorted = true;
+                setSorted(true);
 
                 return;
             }
@@ -58,7 +54,7 @@ public class MergeSort extends Sort {
 
             merged = new HashMap<>();
 
-            running = true;
+            setRunning(true);
         } else {
             currentPointerMap = pointerMaps.get(currentTreeNode);
             if((currentPointerMap.get(LOW) < currentPointerMap.get(HIGH)) && !merged.containsKey(currentTreeNode)){
@@ -114,7 +110,7 @@ public class MergeSort extends Sort {
                     merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
                     merged.put(currentTreeNode, true);
                     if(currentTreeNode == calculateNodeValue(0, data.size() - 1)) {
-                        sorted = true;
+                        setSorted(true);
                     }
                 }
             }

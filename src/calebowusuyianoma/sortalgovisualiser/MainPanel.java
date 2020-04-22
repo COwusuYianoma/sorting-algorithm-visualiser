@@ -1,6 +1,5 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -21,17 +20,17 @@ import static java.util.Collections.max;
 public class MainPanel extends JPanel implements ActionListener {
     private ArrayGenerator arrayGenerator;
     private ArrayList<Integer> data, originalData;
-    private Sort sort;
     private BubbleSort bubbleSort;
     private MergeSort mergeSort;
     private Timer timer;
     private int verticalSpace, spaceBetweenBars;
     private final String defaultText = "Select a sorting algorithm";
     private String sortAlgorithm;
-    private boolean running, justRan;
+    private boolean sortRunning, sortJustRan;
     private String[] sortingAlgorithmsListText;
     private JComboBox sortingAlgorithmsList;
     private JButton sortButton, undoSortButton;
+    private JPanel panel;
 
     public MainPanel() {
         timer = new Timer(100, this);
@@ -40,7 +39,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
         arrayGenerator = new ArrayGenerator();
         int max = 100;
-        int size = 10;
+        int size = 20;
         data = arrayGenerator.generateRandomArray(size, max);
         originalData = new ArrayList<>();
         for(int i = 0; i < data.size(); i++) {
@@ -51,15 +50,13 @@ public class MainPanel extends JPanel implements ActionListener {
         //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
         // data = new ArrayList<>(Arrays.asList(7, 6, 5, 4, 3, 2, 1));
 
-        JPanel panel = new JPanel();
-
         sortingAlgorithmsListText = new String[] {defaultText, "Bubble sort", "Merge sort"};
         sortingAlgorithmsList = new JComboBox(sortingAlgorithmsListText);
         sortingAlgorithmsList.setSelectedIndex(0);
         sortingAlgorithmsList.addActionListener(e -> {
             String selectedAlgorithm = (String)sortingAlgorithmsList.getSelectedItem();
-            if(!running) {
-                setAlgorithm(selectedAlgorithm);
+            if(!sortRunning) {
+                setSortingAlgorithm(selectedAlgorithm);
             }
         });
 
@@ -68,19 +65,21 @@ public class MainPanel extends JPanel implements ActionListener {
 
         undoSortButton = new JButton("Undo sort");
         undoSortButton.addActionListener(e -> {
-            if(!running) {
-                if(justRan) {
+            if(!sortRunning) {
+                if(sortJustRan) {
                     for(int i = 0; i < originalData.size(); i++) {
                         data.set(i, originalData.get(i));
-                        justRan = false;
-                        repaint();
                     }
+
+                    sortJustRan = false;
+                    repaint();
                 } else {
                     JOptionPane.showMessageDialog(this, "Please run a sorting algorithm!");
                 }
             }
         });
 
+        panel = new JPanel();
         panel.add(sortingAlgorithmsList);
         panel.add(sortButton);
         panel.add(undoSortButton);
@@ -96,7 +95,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int maxBarHeight = getHeight() - verticalSpace;
         int maxValue = max(data);
 
-        if(sort != null && sort.running) {
+        if(sortRunning) {
             switch (sortAlgorithm) {
                 case(BubbleSort.name):
                     paintComponentForBubbleSort(g, maxValue, maxBarHeight);
@@ -110,13 +109,14 @@ public class MainPanel extends JPanel implements ActionListener {
         } else {
             int x = 5;
             int width = (getWidth() / data.size()) - spaceBetweenBars;
-            for (int i = 0; i < data.size(); i++) {
-                if(justRan) {
-                    g.setColor(Color.MAGENTA);
-                } else {
-                    g.setColor(Color.BLACK);
-                }
 
+            if(sortJustRan) {
+                g.setColor(Color.MAGENTA);
+            } else {
+                g.setColor(Color.BLACK);
+            }
+
+            for (int i = 0; i < data.size(); i++) {
                 int height = (int) (((double) data.get(i) / maxValue) * maxBarHeight);
                 g.fillRect(x, 0, width, height);
                 x += (width + spaceBetweenBars);
@@ -130,9 +130,9 @@ public class MainPanel extends JPanel implements ActionListener {
         int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
-            if(bubbleSort.sorted) {
+            if(bubbleSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if(bubbleSort.running && contains(pointers, i)) {
+            } else if(bubbleSort.running() && contains(pointers, i)) {
                 g.setColor(Color.CYAN);
             } else {
                 g.setColor(Color.BLACK);
@@ -148,7 +148,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int currentTreeNode = data.size() - 1;
         Map<String, Integer> pointerMap = new HashMap<>();
         Map<Integer, Boolean> merged = new HashMap<>();
-        if(mergeSort.running) {
+        if(mergeSort.running()) {
             currentTreeNode = mergeSort.getCurrentTreeNode();
             Map<Integer, Map<String, Integer>> pointerMaps = mergeSort.getPointerMaps();
             pointerMap = pointerMaps.get(currentTreeNode);
@@ -158,15 +158,15 @@ public class MainPanel extends JPanel implements ActionListener {
         int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
-            if(mergeSort.sorted) {
+            if(mergeSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if(mergeSort.running && merged.containsKey(currentTreeNode)) {
+            } else if(mergeSort.running() && merged.containsKey(currentTreeNode)) {
                 if(pointerMap.get(mergeSort.LOW) <= i && pointerMap.get(mergeSort.HIGH) >= i) {
                     g.setColor(Color.MAGENTA);
                 } else {
                     g.setColor(Color.BLACK);
                 }
-            } else if(mergeSort.running && pointerMap.containsValue(i)) {
+            } else if(mergeSort.running() && pointerMap.containsValue(i)) {
                 if((pointerMap.get(mergeSort.LOW) == i || pointerMap.get(mergeSort.HIGH) == i)
                         && pointerMap.get(mergeSort.MIDDLE) == i) {
                     g.setColor(Color.GREEN);
@@ -191,11 +191,9 @@ public class MainPanel extends JPanel implements ActionListener {
             switch(sortAlgorithm) {
                 case(BubbleSort.name):
                     actionPerformedBubbleSort(e);
-                    repaint();
                     break;
                 case(MergeSort.name):
                     actionPerformedMergeSort(e);
-                    repaint();
                     break;
                 default:
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
@@ -207,87 +205,76 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedBubbleSort(ActionEvent e) {
-        if (bubbleSort.running && !bubbleSort.justRanSwap()) {
+        if(bubbleSort.running() && !bubbleSort.justRanSwap()) {
             bubbleSort.swap(data);
         }
 
-        if(bubbleSort.running && bubbleSort.justRanSwap()) {
+        if(bubbleSort.running() && bubbleSort.justRanSwap()) {
             bubbleSort.adjustPointers(data);
         }
 
-        if(!bubbleSort.running && e.getActionCommand() != null) {
+        if(!bubbleSort.running() && e.getActionCommand() != null) {
             if (e.getActionCommand().equals("Sort")) {
-                if(sortAlgorithm == null) {
-                    JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
-                } else {
-                    timer.start();
-                    justRan = false;
-                    bubbleSort.adjustPointers(data);
-                    running = true;
-                }
+                bubbleSort.setSorted(false);
+                timer.start();
+                bubbleSort.adjustPointers(data);
+                sortJustRan = false;
+                sortRunning = true;
             }
         }
 
-        if(bubbleSort.sorted) {
+        if(bubbleSort.running() && bubbleSort.sorted()) {
             timer.stop();
             bubbleSort.setRunning(false);
-            running = false;
-            justRan = true;
+            sortRunning = false;
+            sortJustRan = true;
+
+            System.out.println("The array is sorted");
+            for(int i = 0; i < data.size(); i++) {
+                System.out.println("Element at index " + i + " is: " + data.get(i));
+            }
+            System.out.println();
         }
 
         repaint();
     }
 
     private void actionPerformedMergeSort(ActionEvent e) {
-        if(mergeSort.sorted) {
+        if(mergeSort.running() && mergeSort.sorted()) {
             timer.stop();
             mergeSort.setRunning(false);
-            running = false;
-            justRan = true;
-
-            return;
+            sortRunning = false;
+            sortJustRan = true;
         }
 
-        if(mergeSort.running) {
+        if(mergeSort.running()) {
             mergeSort.adjustPointers(data);
         }
 
-        if(!mergeSort.running && e.getActionCommand() != null) {
+        if(!mergeSort.running() && e.getActionCommand() != null) {
             if (e.getActionCommand().equals("Sort")) {
-                if(sortAlgorithm == null) {
-                    JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
-                } else {
-                    timer.start();
-                    justRan = false;
-
-                    for(int i = 0; i < data.size(); i++) {
-                        System.out.println("Element " + i + " of data is: " + data.get(i));
-                    }
-                    System.out.println();
-
-                    mergeSort.adjustPointers(data);
-                    running = true;
-                }
+                mergeSort.setSorted(false);
+                timer.start();
+                mergeSort.adjustPointers(data);
+                sortJustRan = false;
+                sortRunning = true;
             }
         }
 
         repaint();
     }
 
-    private void setAlgorithm(String selectedAlgorithm) {
+    private void setSortingAlgorithm(String selectedAlgorithm) {
+        sortAlgorithm = selectedAlgorithm;
+
         switch(selectedAlgorithm) {
             case(BubbleSort.name):
                 bubbleSort = new BubbleSort();
-                sort = bubbleSort;
-                sortAlgorithm = selectedAlgorithm;
                 break;
             case(MergeSort.name):
                 mergeSort = new MergeSort();
-                sort = mergeSort;
-                sortAlgorithm = selectedAlgorithm;
                 break;
             default:
-                sortAlgorithm = selectedAlgorithm;
                 break;
         }
     }

@@ -3,13 +3,10 @@ package calebowusuyianoma.sortalgovisualiser;
 import java.util.ArrayList;
 
 public class BubbleSort extends Sort {
-    private boolean justRanSwap;
-    private int i = 0, j = 0;
     public static final String name = "Bubble sort";
 
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
+    private boolean justRanSwap;
+    private int i = 0, j = 0;
 
     public int[] getPointers() {
         return new int[] {i, j};
@@ -22,7 +19,7 @@ public class BubbleSort extends Sort {
     public void adjustPointers(ArrayList<Integer> data) {
         if (j == 0) {
             j = data.size() - 1;
-            running = true;
+            setRunning(true);
         } else if (j > i + 1) {
             j--;
             justRanSwap = false;
@@ -31,7 +28,9 @@ public class BubbleSort extends Sort {
             j = data.size() - 1;
             justRanSwap = false;
         } else {
-            sorted = true;
+            setSorted(true);
+            i = 0;
+            j = 0;
         }
     }
 

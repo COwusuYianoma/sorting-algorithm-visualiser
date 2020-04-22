@@ -30,9 +30,7 @@ public class MergeSort extends Sort {
     }
 
     public void adjustPointers(ArrayList<Integer> data) {
-        if(data.size() == 1) {
-            setSorted(true);
-        } else if(!running()) {
+        if(!running()) {
             Map<String, Integer> pointerMap = new HashMap<>();
             pointerMap.put(LOW, 0);
             pointerMap.put(MIDDLE, Integer.MIN_VALUE);

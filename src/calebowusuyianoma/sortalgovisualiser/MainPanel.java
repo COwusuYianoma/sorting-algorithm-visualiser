@@ -2,8 +2,12 @@ package calebowusuyianoma.sortalgovisualiser;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,8 +34,11 @@ public class MainPanel extends JPanel implements ActionListener {
     private String sortingAlgorithmSelected, sortingAlgorithmRunning;
     private String[] sortingAlgorithmsListText;
     private JComboBox sortingAlgorithmsList;
-    private JButton sortButton, undoSortButton;
+    private JButton generateArrayButton, sortButton, undoSortButton;
     private JPanel panel;
+    private JSpinner spinner;
+    private JLabel label;
+    private SpinnerModel spinnerModel;
 
     public MainPanel() {
         timer = new Timer(100, this);
@@ -42,14 +49,28 @@ public class MainPanel extends JPanel implements ActionListener {
         max = 100;
         size = 10;
         data = arrayGenerator.generateRandomArray(size, max);
-        originalData = new ArrayList<>();
-        for(int i = 0; i < data.size(); i++) {
-            originalData.add(data.get(i));
-        }
+        setOriginalData();
 
+        // TODO: remove this when the project is complete
         //data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
         //data = new ArrayList<>(Arrays.asList(8, 7, 6, 5, 4, 3, 2, 1));
         // data = new ArrayList<>(Arrays.asList(7, 6, 5, 4, 3, 2, 1));
+
+        label = new JLabel("Array size: ");
+        spinnerModel = new SpinnerNumberModel(10, 2, 100, 1);
+        spinner = new JSpinner(spinnerModel);
+        label.setLabelFor(spinner);
+
+        generateArrayButton = new JButton("Generate random array");
+        generateArrayButton.addActionListener(e -> {
+            if(!sorting) {
+                int arraySize = (int)spinner.getValue();
+                data = arrayGenerator.generateRandomArray(arraySize, max);
+                setOriginalData();
+                sortingAlgorithmJustRan = false;
+                repaint();
+            }
+        });
 
         sortingAlgorithmsListText = new String[] {defaultText, "Bubble sort", "Merge sort"};
         sortingAlgorithmsList = new JComboBox(sortingAlgorithmsListText);
@@ -83,6 +104,9 @@ public class MainPanel extends JPanel implements ActionListener {
         });
 
         panel = new JPanel();
+        panel.add(label);
+        panel.add(spinner);
+        panel.add(generateArrayButton);
         panel.add(sortingAlgorithmsList);
         panel.add(sortButton);
         panel.add(undoSortButton);
@@ -145,6 +169,13 @@ public class MainPanel extends JPanel implements ActionListener {
                 fillRectangles(g, i, maxValue, maxBarHeight, x, width);
                 x += (width + spaceBetweenBars);
             }
+        }
+    }
+
+    private void setOriginalData() {
+        originalData = new ArrayList<>();
+        for(int i = 0; i < data.size(); i++) {
+            originalData.add(data.get(i));
         }
     }
 

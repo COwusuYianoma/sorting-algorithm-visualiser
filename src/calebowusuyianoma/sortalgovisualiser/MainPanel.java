@@ -115,10 +115,17 @@ public class MainPanel extends JPanel implements ActionListener {
             if(sorting) {
                 JSlider source = (JSlider) e.getSource();
                 if(!source.getValueIsAdjusting()) {
-
+                    int sortingSpeed = source.getValue();
+                    if(sortingSpeed == 0) {
+                        timer.stop();
+                    } else {
+                        int delay = 5000 / sortingSpeed;
+                        timer.setDelay(delay);
+                        if(!timer.isRunning()) {
+                            timer.start();
+                        }
+                    }
                 }
-                System.out.println(source.getValue());
-                sortingSpeedSlider.setValue(source.getValue());
             }
         });
 
@@ -239,16 +246,36 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void actionPerformedBubbleSort(ActionEvent e) {
         if(bubbleSort.running() && !bubbleSort.justRanSwap()) {
+            if(e.getActionCommand() != null && e.getActionCommand().equals("Sort")
+                    && sortingSpeedSlider.getValue() == 0) { // TODO: refactor every instance of this into a method call
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
             bubbleSort.swap(data);
         }
 
         if(bubbleSort.running() && bubbleSort.justRanSwap()) {
+            if(e.getActionCommand() != null && e.getActionCommand().equals("Sort")
+                    && sortingSpeedSlider.getValue() == 0) { // TODO: refactor every instance of this into a method call
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
             bubbleSort.adjustPointers(data);
         }
 
         if(!bubbleSort.running() && e.getActionCommand() != null) {
             if (e.getActionCommand().equals("Sort")) {
                 bubbleSort.setSorted(false);
+                int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
+                if(sortingSpeedSliderValue == 0) {
+                    JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                    return;
+                }
+                int delay = 5000 / sortingSpeedSliderValue;
+                timer.setDelay(delay);
                 timer.start();
                 startTime = System.currentTimeMillis();
                 bubbleSort.adjustPointers(data);
@@ -260,6 +287,12 @@ public class MainPanel extends JPanel implements ActionListener {
         }
 
         if(bubbleSort.running() && bubbleSort.sorted()) {
+            if(e.getActionCommand() != null && e.getActionCommand().equals("Sort")
+                    && sortingSpeedSlider.getValue() == 0) { // TODO: refactor every instance of this into a method call
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
             endTime = System.currentTimeMillis();
             timer.stop();
             runningTime = endTime - startTime;
@@ -277,6 +310,12 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void actionPerformedMergeSort(ActionEvent e) {
         if(mergeSort.running() && mergeSort.sorted()) {
+            if(e.getActionCommand() != null && e.getActionCommand().equals("Sort")
+                    && sortingSpeedSlider.getValue() == 0) { // TODO: refactor every instance of this into a method call
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
             endTime = System.currentTimeMillis();
             timer.stop();
             runningTime = endTime - startTime;
@@ -290,12 +329,26 @@ public class MainPanel extends JPanel implements ActionListener {
         }
 
         if(mergeSort.running()) {
+            if(e.getActionCommand() != null && e.getActionCommand().equals("Sort")
+                    && sortingSpeedSlider.getValue() == 0) { // TODO: refactor every instance of this into a method call
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
             mergeSort.adjustPointers(data);
         }
 
         if(!mergeSort.running() && e.getActionCommand() != null) {
             if (e.getActionCommand().equals("Sort")) {
                 mergeSort.setSorted(false);
+                int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
+                if(sortingSpeedSliderValue == 0) {
+                    JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                    return;
+                }
+                int delay = 5000 / sortingSpeedSliderValue;
+                timer.setDelay(delay);
                 timer.start();
                 startTime = System.currentTimeMillis();
                 mergeSort.adjustPointers(data);

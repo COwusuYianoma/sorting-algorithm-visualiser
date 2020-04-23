@@ -182,7 +182,7 @@ public class MainPanel extends JPanel implements ActionListener {
             }
 
             for (int i = 0; i < data.size(); i++) {
-                fillRectangles(g, i, maxValue, maxBarHeight, x, width);
+                fillRectangle(g, i, maxValue, maxBarHeight, x, width);
                 x += (width + spaceBetweenBars);
             }
         }
@@ -387,7 +387,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangles(g, i, maxValue, maxBarHeight, x, width);
+            fillRectangle(g, i, maxValue, maxBarHeight, x, width);
             x += (width + spaceBetweenBars);
         }
     }
@@ -427,12 +427,12 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangles(g, i, maxValue, maxBarHeight, x, width);
+            fillRectangle(g, i, maxValue, maxBarHeight, x, width);
             x += (width + spaceBetweenBars);
         }
     }
 
-    private void fillRectangles(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
+    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
         int height = (int)(((double)data.get(index) / maxValue) * maxBarHeight);
         g.fillRect(x, 0, width, height);
     }

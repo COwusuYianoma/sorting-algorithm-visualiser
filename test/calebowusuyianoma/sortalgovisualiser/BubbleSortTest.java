@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 class BubbleSortTest {
-    private BubbleSort bubbleSort = new BubbleSort();
+    private final BubbleSort bubbleSort = new BubbleSort();
+    private final TestUtilities testUtilities = new TestUtilities();
+
     private ArrayList<Integer> expected;
-    private ArrayGenerator arrayGenerator;
-    private TestUtilities testUtilities = new TestUtilities();
 
     @Test
     public void sortLeavesDataUnchangedWhenDataIsEmpty() {
@@ -40,16 +41,16 @@ class BubbleSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(6));
+        ArrayList<Integer> data = new ArrayList<>(Collections.singletonList(6));
         bubbleSort.sort(data);
-        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(6));
+        ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyOnRandomData() {
-        arrayGenerator = new ArrayGenerator();
+        ArrayGenerator arrayGenerator = new ArrayGenerator();
         int size = 10, max = 100;
         ArrayList<Integer> data = arrayGenerator.generateRandomArray(size, max);
 

@@ -13,7 +13,6 @@ public class MergeSort extends Sort {
     private boolean justCalculatedMiddle;
     private int currentTreeNode;
     private Map<Integer, Map<String, Integer>> pointerMaps;
-    private Map<String, Integer> currentPointerMap;
     private Map<Integer, Integer> parentNodes, numberOfTimesChildrenHaveBeenMerged;
     private Map<Integer, Boolean> merged;
 
@@ -50,7 +49,7 @@ public class MergeSort extends Sort {
 
             setRunning(true);
         } else {
-            currentPointerMap = pointerMaps.get(currentTreeNode);
+            Map<String, Integer> currentPointerMap = pointerMaps.get(currentTreeNode);
             if((currentPointerMap.get(LOW) < currentPointerMap.get(HIGH)) && !merged.containsKey(currentTreeNode)){
                 if(!justCalculatedMiddle) {
                     currentPointerMap.put(MIDDLE, (int)Math.floor((double)(currentPointerMap.get(LOW)

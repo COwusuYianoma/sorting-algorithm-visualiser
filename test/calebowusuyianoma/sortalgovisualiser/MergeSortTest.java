@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 class MergeSortTest {
-    private MergeSort mergeSort = new MergeSort();
-    private ArrayGenerator arrayGenerator;
+    private final MergeSort mergeSort = new MergeSort();
+    private final TestUtilities testUtilities = new TestUtilities();
+
     private ArrayList<Integer> expected;
-    private TestUtilities testUtilities = new TestUtilities();
 
     @Test
     public void sortExecutesCorrectlyWhenDataNearlySorted() {
@@ -25,23 +26,23 @@ class MergeSortTest {
     public void sortExecutesCorrectlyWhenDataIsReversed() {
         ArrayList<Integer> data = new ArrayList<>(Arrays.asList(6, 5, 4, 3, 2, 1));
         mergeSort.sort(data);
-        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
+        expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
 
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(6));
+        ArrayList<Integer> data = new ArrayList<>(Collections.singletonList(6));
         mergeSort.sort(data);
-        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(6));
+        expected = new ArrayList<>(Collections.singletonList(6));
 
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyOnRandomData() {
-        arrayGenerator = new ArrayGenerator();
+        ArrayGenerator arrayGenerator = new ArrayGenerator();
         int size = 10, max = 100;
         ArrayList<Integer> data = arrayGenerator.generateRandomArray(size, max);
 

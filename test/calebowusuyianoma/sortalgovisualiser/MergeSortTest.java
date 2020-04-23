@@ -52,7 +52,7 @@ class MergeSortTest {
         mergeSort.sort(data);
 
         System.out.println();
-        System.out.print("Array after having been sorted by MergeSort: ");
+        System.out.print("Array after having been sorted: ");
         System.out.println(data.toString());
 
         Assertions.assertTrue(testUtilities.isSorted(data));

@@ -28,7 +28,6 @@ import static java.util.Collections.max;
 
 public class MainPanel extends JPanel implements ActionListener {
     private final int timerDelayMultiplier = 5000;
-    private final int verticalSpaceUnderLargestBar = 150;
     private final int spaceBetweenBars = 5;
     private final Timer timer = new Timer(100, this);
     private final JSlider sortingSpeedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
@@ -167,7 +166,7 @@ public class MainPanel extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int maxBarHeight = getHeight() - verticalSpaceUnderLargestBar;
+        int maxBarHeight = getHeight() - 150;
         int maxValue = max(data);
 
         if(sorting) {

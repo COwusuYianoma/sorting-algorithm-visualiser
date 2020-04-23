@@ -5,26 +5,31 @@ import java.util.ArrayList;
 public class InsertionSort extends Sort {
     public static final String name = "Insertion sort";
 
-    private int keyIndex;
+    private int keyIndex, key, sortedElementIndex;
 
     public int getKeyIndex() {
         return keyIndex;
+    }
+
+    public int getKey() {
+        return key;
     }
 
     public void adjustPointers(ArrayList<Integer> data) {
         if(!running()) {
             setRunning(true);
             keyIndex = 1;
+            key = data.get(keyIndex);
+            sortedElementIndex = keyIndex - 1;
+        } else if(sortedElementIndex >= 0 && data.get(sortedElementIndex) > key) {
+            data.set(sortedElementIndex + 1, data.get(sortedElementIndex));
+            sortedElementIndex -= 1;
         } else {
-            int key = data.get(keyIndex);
-            int sortedElementIndex = keyIndex - 1;
-            while(sortedElementIndex >= 0 && data.get(sortedElementIndex) > key) {
-                data.set(sortedElementIndex + 1, data.get(sortedElementIndex));
-                sortedElementIndex -= 1;
-            }
             data.set(sortedElementIndex + 1, key);
-            keyIndex += 1;
-            if(keyIndex == data.size()) {
+            if(++keyIndex < data.size()) {
+                key = data.get(keyIndex);
+                sortedElementIndex = keyIndex - 1;
+            } else {
                 setSorted(true);
             }
         }

@@ -236,25 +236,23 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedBubbleSort(ActionEvent e) {
-        if(bubbleSort.running() && !bubbleSort.justRanSwap()) {
+        if(bubbleSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
 
                 return;
+            } else if(bubbleSort.sorted()) {
+                timer.stop();
+                updateFinalRunningTime();
+                resetVariablesAfterSorting();
+                setRunningTimeLabel();
+                bubbleSort.setRunning(false);
+            } else if(bubbleSort.justRanSwap()) {
+                bubbleSort.adjustPointers(data);
+            } else {
+                bubbleSort.swap(data);
             }
-            bubbleSort.swap(data);
-        }
-
-        if(bubbleSort.running() && bubbleSort.justRanSwap()) {
-            if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
-                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
-
-                return;
-            }
-            bubbleSort.adjustPointers(data);
-        }
-
-        if(!bubbleSort.running() && sortButtonClicked(e)) {
+        } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
             if(sortingSpeedSliderValue == 0) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -263,35 +261,11 @@ public class MainPanel extends JPanel implements ActionListener {
             }
 
             bubbleSort.setSorted(false);
-
-            int delay = timerDelayMultiplier / sortingSpeedSliderValue;
-            timer.setDelay(delay);
-            timer.start();
-
-            startTime = System.currentTimeMillis();
-            bubbleSort.adjustPointers(data);
-            sortingAlgorithmJustRan = false;
-            sorting = true;
+            startTimerBeforeSorting(sortingSpeedSliderValue);
+            resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = BubbleSort.name;
-        }
-
-        if(bubbleSort.running() && bubbleSort.sorted()) {
-            if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
-                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
-
-                return;
-            }
-            endTime = System.currentTimeMillis();
-            timer.stop();
-            runningTime += endTime - startTime;
-            startTime = 0;
-            endTime = 0;
-            bubbleSort.setRunning(false);
-            sorting = false;
-            sortingAlgorithmRunning = null;
-            sortingAlgorithmJustRan = true;
-            setRunningTimeLabel();
+            bubbleSort.adjustPointers(data);
         }
 
         repaint();
@@ -332,53 +306,34 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedMergeSort(ActionEvent e) {
-        if(mergeSort.running() && mergeSort.sorted()) {
-            if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
-                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
-
-                return;
-            }
-            endTime = System.currentTimeMillis();
-            timer.stop();
-            runningTime += endTime - startTime;
-            startTime = 0;
-            endTime = 0;
-            mergeSort.setRunning(false);
-            sorting = false;
-            sortingAlgorithmRunning = null;
-            sortingAlgorithmJustRan = true;
-            setRunningTimeLabel();
-        }
-
-        // TODO: refactor this block and the one above?
         if(mergeSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
 
                 return;
+            } else if(mergeSort.sorted()) {
+                timer.stop();
+                updateFinalRunningTime();
+                resetVariablesAfterSorting();
+                setRunningTimeLabel();
+                mergeSort.setRunning(false);
+            } else {
+                mergeSort.adjustPointers(data);
             }
-            mergeSort.adjustPointers(data);
-        }
-
-        if(!mergeSort.running() && sortButtonClicked(e)) {
-            mergeSort.setSorted(false);
-
+        } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
             if(sortingSpeedSliderValue == 0) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
 
                 return;
             }
-            int delay = timerDelayMultiplier / sortingSpeedSliderValue;
-            timer.setDelay(delay);
-            timer.start();
 
-            startTime = System.currentTimeMillis();
-            mergeSort.adjustPointers(data);
-            sortingAlgorithmJustRan = false;
-            sorting = true;
+            mergeSort.setSorted(false);
+            startTimerBeforeSorting(sortingSpeedSliderValue);
+            resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = MergeSort.name;
+            mergeSort.adjustPointers(data);
         }
 
         repaint();
@@ -467,13 +422,18 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void paintComponentForInsertionSort(Graphics g, int maxValue, int maxBarHeight) {
         int keyIndex = insertionSort.getKeyIndex();
+        int key = insertionSort.getKey();
         int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for(int i = 0; i < data.size(); i++) {
             if(i < keyIndex) {
-                g.setColor(Color.MAGENTA);
+                g.setColor(Color.ORANGE);
             } else if(i == keyIndex) {
-                g.setColor(Color.CYAN);
+                if(data.get(i) == key) {
+                    g.setColor(Color.CYAN);
+                } else {
+                    g.setColor(Color.ORANGE);
+                }
             } else {
                 g.setColor(Color.BLACK);
             }

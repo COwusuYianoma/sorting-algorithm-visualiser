@@ -3,7 +3,7 @@ package calebowusuyianoma.sortalgovisualiser;
 import java.util.ArrayList;
 
 public class InsertionSort extends Sort {
-    public static final String name = "Insertion sort";
+    public static final String NAME = "Insertion sort";
 
     private int keyIndex, key, sortedElementIndex;
 
@@ -15,7 +15,7 @@ public class InsertionSort extends Sort {
         return key;
     }
 
-    public void adjustPointers(ArrayList<Integer> data) {
+    public void moveToNextStep(ArrayList<Integer> data) {
         if(!running()) {
             setRunning(true);
             keyIndex = 1;

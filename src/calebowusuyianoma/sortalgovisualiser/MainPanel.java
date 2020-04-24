@@ -39,6 +39,7 @@ public class MainPanel extends JPanel implements ActionListener {
     private BubbleSort bubbleSort;
     private InsertionSort insertionSort;
     private MergeSort mergeSort;
+    private TimSort timSort;
     private String sortingAlgorithmSelected, sortingAlgorithmRunning;
 
     public MainPanel() {
@@ -49,7 +50,7 @@ public class MainPanel extends JPanel implements ActionListener {
         setOriginalData();
 
         JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
-        SpinnerModel spinnerModel = new SpinnerNumberModel(defaultArraySize, 2, 100, 1);
+        SpinnerModel spinnerModel = new SpinnerNumberModel(defaultArraySize, 2, 200, 1);
         JSpinner arraySizeSpinner = new JSpinner(spinnerModel);
         arraySizeSpinnerLabel.setLabelFor(arraySizeSpinner);
 
@@ -68,8 +69,8 @@ public class MainPanel extends JPanel implements ActionListener {
         String defaultText = "Select a sorting algorithm";
         sortingAlgorithmSelected = defaultText;
 
-        String[] sortingAlgorithmsListText = new String[] {defaultText,
-                BubbleSort.name, InsertionSort.name, MergeSort.name};
+        String[] sortingAlgorithmsListText = new String[] {defaultText, BubbleSort.NAME,
+                InsertionSort.NAME, MergeSort.NAME, TimSort.NAME};
         JComboBox<String> sortingAlgorithmsList = new JComboBox<>(sortingAlgorithmsListText);
         sortingAlgorithmsList.setSelectedIndex(0);
         sortingAlgorithmsList.addActionListener(e -> {
@@ -135,39 +136,25 @@ public class MainPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(sorting) {
-            switch(sortingAlgorithmRunning) {
-                case(BubbleSort.name):
-                    actionPerformedBubbleSort(e);
-                    break;
-                case(InsertionSort.name):
-                    actionPerformedInsertionSort(e);
-                    break;
-                case(MergeSort.name):
-                    actionPerformedMergeSort(e);
-                    break;
-                default:
-                    break;
-            }
-        }
-        else {
-            switch(sortingAlgorithmSelected) {
-                case(BubbleSort.name):
-                    bubbleSort = new BubbleSort();
-                    actionPerformedBubbleSort(e);
-                    break;
-                case(InsertionSort.name):
-                    insertionSort = new InsertionSort();
-                    actionPerformedInsertionSort(e);
-                    break;
-                case(MergeSort.name):
-                    mergeSort = new MergeSort();
-                    actionPerformedMergeSort(e);
-                    break;
-                default:
+        String switchVariable = sorting ? sortingAlgorithmRunning : sortingAlgorithmSelected;
+        switch(switchVariable) {
+            case(BubbleSort.NAME):
+                actionPerformedBubbleSort(e);
+                break;
+            case(InsertionSort.NAME):
+                actionPerformedInsertionSort(e);
+                break;
+            case(MergeSort.NAME):
+                actionPerformedMergeSort(e);
+                break;
+            case(TimSort.NAME):
+                actionPerformedTimSort(e);
+                break;
+            default:
+                if(!sorting) {
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
-                    break;
-            }
+                }
+                break;
         }
     }
 
@@ -236,6 +223,10 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedBubbleSort(ActionEvent e) {
+        if(!sorting) {
+            bubbleSort = new BubbleSort();
+        }
+
         if(bubbleSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -248,7 +239,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 bubbleSort.setRunning(false);
             } else if(bubbleSort.justRanSwap()) {
-                bubbleSort.adjustPointers(data);
+                bubbleSort.moveToNextStep(data);
             } else {
                 bubbleSort.swap(data);
             }
@@ -264,14 +255,18 @@ public class MainPanel extends JPanel implements ActionListener {
             startTimerBeforeSorting(sortingSpeedSliderValue);
             resetVariablesBeforeSorting();
             resetRunningTime();
-            sortingAlgorithmRunning = BubbleSort.name;
-            bubbleSort.adjustPointers(data);
+            sortingAlgorithmRunning = BubbleSort.NAME;
+            bubbleSort.moveToNextStep(data);
         }
 
         repaint();
     }
 
     private void actionPerformedInsertionSort(ActionEvent e) {
+        if(!sorting) {
+            insertionSort = new InsertionSort();
+        }
+
         if(insertionSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -284,7 +279,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 insertionSort.setRunning(false);
             } else {
-                insertionSort.adjustPointers(data);
+                insertionSort.moveToNextStep(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -298,14 +293,18 @@ public class MainPanel extends JPanel implements ActionListener {
             startTimerBeforeSorting(sortingSpeedSliderValue);
             resetVariablesBeforeSorting();
             resetRunningTime();
-            sortingAlgorithmRunning = InsertionSort.name;
-            insertionSort.adjustPointers(data);
+            sortingAlgorithmRunning = InsertionSort.NAME;
+            insertionSort.moveToNextStep(data);
         }
 
         repaint();
     }
 
     private void actionPerformedMergeSort(ActionEvent e) {
+        if(!sorting) {
+            mergeSort = new MergeSort();
+        }
+
         if(mergeSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -318,7 +317,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 mergeSort.setRunning(false);
             } else {
-                mergeSort.adjustPointers(data);
+                mergeSort.moveToNextStep(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -332,8 +331,46 @@ public class MainPanel extends JPanel implements ActionListener {
             startTimerBeforeSorting(sortingSpeedSliderValue);
             resetVariablesBeforeSorting();
             resetRunningTime();
-            sortingAlgorithmRunning = MergeSort.name;
-            mergeSort.adjustPointers(data);
+            sortingAlgorithmRunning = MergeSort.NAME;
+            mergeSort.moveToNextStep(data);
+        }
+
+        repaint();
+    }
+
+    private void actionPerformedTimSort(ActionEvent e) {
+        if(!sorting) {
+            timSort = new TimSort();
+        }
+
+        if(timSort.running()) {
+            if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            } else if(timSort.sorted()) {
+                timer.stop();
+                updateFinalRunningTime();
+                resetVariablesAfterSorting();
+                setRunningTimeLabel();
+                timSort.setRunning(false);
+            } else {
+                timSort.moveToNextStep(data);
+            }
+        } else if(sortButtonClicked(e)) {
+            int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
+            if(sortingSpeedSliderValue == 0) {
+                JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
+
+                return;
+            }
+
+            timSort.setSorted(false);
+            startTimerBeforeSorting(sortingSpeedSliderValue);
+            resetVariablesBeforeSorting();
+            resetRunningTime();
+            sortingAlgorithmRunning = TimSort.NAME;
+            timSort.moveToNextStep(data);
         }
 
         repaint();
@@ -373,12 +410,12 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void setSortingAlgorithm(String selectedAlgorithm) {
         switch(selectedAlgorithm) {
-            case(BubbleSort.name):
+            case(BubbleSort.NAME):
                 bubbleSort = new BubbleSort();
                 break;
-            case(InsertionSort.name):
+            case(InsertionSort.NAME):
                 insertionSort = new InsertionSort();
-            case(MergeSort.name):
+            case(MergeSort.NAME):
                 mergeSort = new MergeSort();
                 break;
             default:
@@ -388,14 +425,17 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private void paintComponentForSortingAlgorithm(Graphics g, int maxValue, int maxBarHeight) {
         switch (sortingAlgorithmRunning) {
-            case(BubbleSort.name):
+            case(BubbleSort.NAME):
                 paintComponentForBubbleSort(g, maxValue, maxBarHeight);
                 break;
-            case(InsertionSort.name):
+            case(InsertionSort.NAME):
                 paintComponentForInsertionSort(g, maxValue, maxBarHeight);
                 break;
-            case(MergeSort.name):
+            case(MergeSort.NAME):
                 paintComponentForMergeSort(g, maxValue, maxBarHeight);
+                break;
+            case(TimSort.NAME):
+                paintComponentForTimSort(g, maxValue, maxBarHeight);
                 break;
             default:
                 break;
@@ -474,6 +514,37 @@ public class MainPanel extends JPanel implements ActionListener {
                 } else {
                     g.setColor(Color.CYAN);
                 }
+            } else {
+                g.setColor(Color.BLACK);
+            }
+
+            fillRectangle(g, i, maxValue, maxBarHeight, x, width);
+            x += (width + spaceBetweenBars);
+        }
+    }
+
+    private void paintComponentForTimSort(Graphics g, int maxValue, int maxBarHeight) {
+        int left = timSort.getLeft();
+        int keyIndex = timSort.getKeyIndex();
+        int key = timSort.getKey();
+        int mergeStartIndex = timSort.getMergeStartIndex();
+        int mergeEndIndex = timSort.getMergeEndIndex();
+        boolean insertionSorting = timSort.isInsertionSorting();
+        int x = 5;
+        int width = (getWidth() / data.size()) - spaceBetweenBars;
+        for (int i = 0; i < data.size(); i++) {
+            if(timSort.sorted()) {
+                g.setColor(Color.MAGENTA);
+            } else if(i >= left && i < keyIndex) {
+                g.setColor(Color.ORANGE);
+            } else if(i == keyIndex) {
+                if(data.get(i) == key) {
+                    g.setColor(Color.CYAN);
+                } else {
+                    g.setColor(Color.ORANGE);
+                }
+            } else if(!insertionSorting && i >= mergeStartIndex && i <= mergeEndIndex) {
+                g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.BLACK);
             }

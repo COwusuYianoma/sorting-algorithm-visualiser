@@ -3,7 +3,7 @@ package calebowusuyianoma.sortalgovisualiser;
 import java.util.ArrayList;
 
 public class BubbleSort extends Sort {
-    public static final String name = "Bubble sort";
+    public static final String NAME = "Bubblesort";
 
     private boolean justRanSwap;
     private int i = 0, j = 0;
@@ -16,7 +16,7 @@ public class BubbleSort extends Sort {
         return justRanSwap;
     }
 
-    public void adjustPointers(ArrayList<Integer> data) {
+    public void moveToNextStep(ArrayList<Integer> data) {
         if (!running() && j == 0) {
             j = data.size() - 1;
             setRunning(true);

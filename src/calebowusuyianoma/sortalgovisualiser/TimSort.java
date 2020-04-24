@@ -3,6 +3,8 @@ package calebowusuyianoma.sortalgovisualiser;
 import java.util.ArrayList;
 
 public class TimSort {
+    public static final String name = "timsort";
+
     private final InsertionSort insertionSort = new InsertionSort();
     private final MergeSort mergeSort = new MergeSort();
 

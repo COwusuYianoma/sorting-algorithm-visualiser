@@ -39,6 +39,7 @@ public class MainPanel extends JPanel implements ActionListener {
     private BubbleSort bubbleSort;
     private InsertionSort insertionSort;
     private MergeSort mergeSort;
+    private TimSort timSort;
     private String sortingAlgorithmSelected, sortingAlgorithmRunning;
 
     public MainPanel() {
@@ -68,8 +69,8 @@ public class MainPanel extends JPanel implements ActionListener {
         String defaultText = "Select a sorting algorithm";
         sortingAlgorithmSelected = defaultText;
 
-        String[] sortingAlgorithmsListText = new String[] {defaultText,
-                BubbleSort.name, InsertionSort.name, MergeSort.name};
+        String[] sortingAlgorithmsListText = new String[] {defaultText, BubbleSort.name,
+                InsertionSort.name, MergeSort.name, TimSort.name};
         JComboBox<String> sortingAlgorithmsList = new JComboBox<>(sortingAlgorithmsListText);
         sortingAlgorithmsList.setSelectedIndex(0);
         sortingAlgorithmsList.addActionListener(e -> {
@@ -135,39 +136,25 @@ public class MainPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(sorting) {
-            switch(sortingAlgorithmRunning) {
-                case(BubbleSort.name):
-                    actionPerformedBubbleSort(e);
-                    break;
-                case(InsertionSort.name):
-                    actionPerformedInsertionSort(e);
-                    break;
-                case(MergeSort.name):
-                    actionPerformedMergeSort(e);
-                    break;
-                default:
-                    break;
-            }
-        }
-        else {
-            switch(sortingAlgorithmSelected) {
-                case(BubbleSort.name):
-                    bubbleSort = new BubbleSort();
-                    actionPerformedBubbleSort(e);
-                    break;
-                case(InsertionSort.name):
-                    insertionSort = new InsertionSort();
-                    actionPerformedInsertionSort(e);
-                    break;
-                case(MergeSort.name):
-                    mergeSort = new MergeSort();
-                    actionPerformedMergeSort(e);
-                    break;
-                default:
+        String switchVariable = sorting ? sortingAlgorithmRunning : sortingAlgorithmSelected;
+
+        switch(switchVariable) {
+            case(BubbleSort.name):
+                actionPerformedBubbleSort(e);
+                break;
+            case(InsertionSort.name):
+                actionPerformedInsertionSort(e);
+                break;
+            case(MergeSort.name):
+                actionPerformedMergeSort(e);
+                break;
+            case(TimSort.name):
+                actionPerformedTimSort(e);
+            default:
+                if(!sorting) {
                     JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
-                    break;
-            }
+                }
+                break;
         }
     }
 
@@ -236,6 +223,10 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedBubbleSort(ActionEvent e) {
+        if(!sorting) {
+            bubbleSort = new BubbleSort();
+        }
+
         if(bubbleSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -272,6 +263,10 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedInsertionSort(ActionEvent e) {
+        if(!sorting) {
+            insertionSort = new InsertionSort();
+        }
+
         if(insertionSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -306,6 +301,10 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void actionPerformedMergeSort(ActionEvent e) {
+        if(!sorting) {
+            mergeSort = new MergeSort();
+        }
+
         if(mergeSort.running()) {
             if(sortButtonClickedWhenSortingSpeedIsZero(e)) {
                 JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
@@ -337,6 +336,14 @@ public class MainPanel extends JPanel implements ActionListener {
         }
 
         repaint();
+    }
+
+    private void actionPerformedTimSort(ActionEvent e) {
+        if(!sorting) {
+            timSort = new TimSort();
+        }
+
+        
     }
 
     private boolean sortButtonClickedWhenSortingSpeedIsZero(ActionEvent e) {

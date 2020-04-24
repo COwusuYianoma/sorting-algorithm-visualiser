@@ -5,34 +5,8 @@ import java.util.ArrayList;
 public class BubbleSort extends Sort {
     public static final String NAME = "Bubblesort";
 
-    private boolean justRanSwap;
-    private int i = 0, j = 0;
-
-    public int[] getPointers() {
-        return new int[] {i, j};
-    }
-
-    public boolean justRanSwap() {
-        return justRanSwap;
-    }
-
-    public void moveToNextStep(ArrayList<Integer> data) {
-        if (!running() && j == 0) {
-            j = data.size() - 1;
-            setRunning(true);
-        } else if (j > i + 1) {
-            j--;
-            justRanSwap = false;
-        } else if (i < data.size() - 1) {
-            i++;
-            j = data.size() - 1;
-            justRanSwap = false;
-        } else {
-            setSorted(true);
-            i = 0;
-            j = 0;
-        }
-    }
+    private boolean justSwappedElements;
+    private int outerForLoopVariable, innerForLoopVariable;
 
     public void sort(ArrayList<Integer> data) {
         for (int i = 0; i < data.size() - 1; i++) {
@@ -44,16 +18,40 @@ public class BubbleSort extends Sort {
         }
     }
 
-    public void swap(ArrayList<Integer> data) {
-        if (data.get(j) < data.get(j - 1)) {
-            swap(data, j);
-        }
-        justRanSwap = true;
+    private void swap(ArrayList<Integer> data, int key) {
+        int temp = data.get(key);
+        data.set(key, data.get(key - 1));
+        data.set(key - 1, temp);
     }
 
-    private void swap(ArrayList<Integer> data, int index) {
-        int temp = data.get(index);
-        data.set(index, data.get(index - 1));
-        data.set(index - 1, temp);
+    public void moveToNextStep(ArrayList<Integer> data) {
+        if (!running() && innerForLoopVariable == 0) {
+            innerForLoopVariable = data.size() - 1;
+            setRunning(true);
+        } else if (innerForLoopVariable > outerForLoopVariable + 1) {
+            innerForLoopVariable--;
+            justSwappedElements = false;
+        } else if (outerForLoopVariable < data.size() - 1) {
+            outerForLoopVariable++;
+            innerForLoopVariable = data.size() - 1;
+            justSwappedElements = false;
+        } else {
+            setSorted(true);
+        }
+    }
+
+    public void swap(ArrayList<Integer> data) {
+        if (data.get(innerForLoopVariable) < data.get(innerForLoopVariable - 1)) {
+            swap(data, innerForLoopVariable);
+        }
+        justSwappedElements = true;
+    }
+
+    public int[] getForLoopVariables() {
+        return new int[] {outerForLoopVariable, innerForLoopVariable};
+    }
+
+    public boolean justSwappedElements() {
+        return justSwappedElements;
     }
 }

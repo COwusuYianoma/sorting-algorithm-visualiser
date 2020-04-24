@@ -44,9 +44,10 @@ public class MainPanel extends JPanel implements ActionListener {
 
     public MainPanel() {
         int defaultArraySize = 10;
-        int maxArrayValue = 100;
+        int minPossibleValue = 1;
+        int maxPossibleValue = 100;
         ArrayGenerator arrayGenerator = new ArrayGenerator();
-        data = arrayGenerator.generateRandomArray(defaultArraySize, maxArrayValue);
+        data = arrayGenerator.generateRandomArray(defaultArraySize, minPossibleValue, maxPossibleValue);
         setOriginalData();
 
         JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
@@ -58,7 +59,7 @@ public class MainPanel extends JPanel implements ActionListener {
         generateArrayButton.addActionListener(e -> {
             if(!sorting) {
                 int arraySize = (int) arraySizeSpinner.getValue();
-                data = arrayGenerator.generateRandomArray(arraySize, maxArrayValue);
+                data = arrayGenerator.generateRandomArray(arraySize, minPossibleValue, maxPossibleValue);
                 setOriginalData();
                 sortingAlgorithmJustRan = false;
                 resetRunningTime();
@@ -238,7 +239,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 resetVariablesAfterSorting();
                 setRunningTimeLabel();
                 bubbleSort.setRunning(false);
-            } else if(bubbleSort.justRanSwap()) {
+            } else if(bubbleSort.justSwappedElements()) {
                 bubbleSort.moveToNextStep(data);
             } else {
                 bubbleSort.swap(data);
@@ -443,7 +444,7 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void paintComponentForBubbleSort(Graphics g, int maxValue, int maxBarHeight) {
-        int[] pointers = bubbleSort.getPointers();
+        int[] pointers = bubbleSort.getForLoopVariables();
         int x = 5;
         int width = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {

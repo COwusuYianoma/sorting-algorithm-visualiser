@@ -127,7 +127,11 @@ public class MergeSort extends Sort {
         }
     }
 
-    private void merge(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
+    public void merge(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
+        if(middleIndex + 1 > data.size() || highIndex + 1 > data.size()) {
+            return;
+        }
+
         ArrayList<Integer> leftSubArray = new ArrayList<>(data.subList(lowIndex, middleIndex + 1));
         ArrayList<Integer> rightSubArray = new ArrayList<>(data.subList(middleIndex + 1, highIndex + 1));
 

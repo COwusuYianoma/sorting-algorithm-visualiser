@@ -43,10 +43,11 @@ class MergeSortTest {
     @Test
     public void sortExecutesCorrectlyOnRandomData() {
         ArrayGenerator arrayGenerator = new ArrayGenerator();
-        int size = 10, max = 100;
+        int size = arrayGenerator.getRandomNumberInRange(1, 1000);
+        int max = 2000;
         ArrayList<Integer> data = arrayGenerator.generateRandomArray(size, max);
 
-        System.out.print("Original random array: ");
+        System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());
 
         mergeSort.sort(data);

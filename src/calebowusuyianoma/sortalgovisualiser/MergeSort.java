@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MergeSort extends Sort {
-    public static final String name = "Merge sort";
+    public static final String NAME = "Merge sort";
     public static final String LOW = "low";
     public static final String MIDDLE = "middle";
     public static final String HIGH = "high";
@@ -28,7 +28,7 @@ public class MergeSort extends Sort {
         return merged;
     }
 
-    public void adjustPointers(ArrayList<Integer> data) {
+    public void moveToNextStep(ArrayList<Integer> data) {
         if(!running()) {
             Map<String, Integer> pointerMap = new HashMap<>();
             pointerMap.put(LOW, 0);

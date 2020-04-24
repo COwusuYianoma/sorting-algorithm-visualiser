@@ -1,5 +1,7 @@
 package calebowusuyianoma.sortalgovisualiser;
 
+import java.util.ArrayList;
+
 public abstract class Sort {
     private boolean running, sorted;
 
@@ -18,4 +20,6 @@ public abstract class Sort {
     protected void setSorted(boolean sorted) {
         this.sorted = sorted;
     }
+
+    protected abstract void moveToNextStep(ArrayList<Integer> data);
 }

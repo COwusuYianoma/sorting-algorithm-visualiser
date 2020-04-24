@@ -9,7 +9,7 @@ public class MainFrame extends JFrame {
         MainPanel mainPanel = new MainPanel();
         add(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(1200, 600));
+        setPreferredSize(new Dimension(1250, 600));
         pack();
         setLocationRelativeTo(null);
         setVisible(true);

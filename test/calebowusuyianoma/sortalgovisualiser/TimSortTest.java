@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-class InsertionSortTest {
-    private final InsertionSort insertionSort = new InsertionSort();
+class TimSortTest {
+    private final TimSort timSort = new TimSort();
     private final TestUtilities testUtilities = new TestUtilities();
 
     private ArrayList<Integer> expected;
@@ -16,7 +16,7 @@ class InsertionSortTest {
     @Test
     public void sortLeavesDataUnchangedWhenDataIsEmpty() {
         ArrayList<Integer> data = new ArrayList<>();
-        insertionSort.sort(data);
+        timSort.sort(data);
 
         Assertions.assertTrue(data.isEmpty());
     }
@@ -24,7 +24,7 @@ class InsertionSortTest {
     @Test
     public void sortExecutesCorrectlyWhenDataNearlySorted() {
         ArrayList<Integer> data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        insertionSort.sort(data);
+        timSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         Assertions.assertEquals(expected, data);
@@ -33,7 +33,7 @@ class InsertionSortTest {
     @Test
     public void sortExecutesCorrectlyWhenDataIsReversed() {
         ArrayList<Integer> data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        insertionSort.sort(data);
+        timSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         Assertions.assertEquals(expected, data);
@@ -42,7 +42,7 @@ class InsertionSortTest {
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
         ArrayList<Integer> data = new ArrayList<>(Collections.singletonList(6));
-        insertionSort.sort(data);
+        timSort.sort(data);
         ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
         Assertions.assertEquals(expected, data);
@@ -58,7 +58,7 @@ class InsertionSortTest {
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());
 
-        insertionSort.sort(data);
+        timSort.sort(data);
 
         System.out.println();
         System.out.print("Array after having been sorted: ");

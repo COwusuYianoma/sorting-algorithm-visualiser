@@ -21,6 +21,5 @@ public abstract class Sort {
         this.sorted = sorted;
     }
 
-    @SuppressWarnings("unused")
-    protected abstract void moveToNextStep(ArrayList<Integer> data);
+    protected abstract void moveToNextStepInVisualisation(ArrayList<Integer> data);
 }

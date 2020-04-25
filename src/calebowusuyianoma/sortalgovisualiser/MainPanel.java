@@ -47,7 +47,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int minPossibleValue = 1;
         int maxPossibleValue = 100;
         ArrayGenerator arrayGenerator = new ArrayGenerator();
-        data = arrayGenerator.generateRandomArray(defaultArraySize, minPossibleValue, maxPossibleValue);
+        data = arrayGenerator.generateRandomIntegerArray(defaultArraySize, minPossibleValue, maxPossibleValue);
         setOriginalData();
 
         JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
@@ -59,7 +59,7 @@ public class MainPanel extends JPanel implements ActionListener {
         generateArrayButton.addActionListener(e -> {
             if(!sorting) {
                 int arraySize = (int) arraySizeSpinner.getValue();
-                data = arrayGenerator.generateRandomArray(arraySize, minPossibleValue, maxPossibleValue);
+                data = arrayGenerator.generateRandomIntegerArray(arraySize, minPossibleValue, maxPossibleValue);
                 setOriginalData();
                 sortingAlgorithmJustRan = false;
                 resetRunningTime();
@@ -164,10 +164,10 @@ public class MainPanel extends JPanel implements ActionListener {
         super.paintComponent(g);
 
         int maxBarHeight = getHeight() - 150;
-        int maxValue = max(data);
+        int maxArrayValue = max(data);
 
         if(sorting) {
-            paintComponentForSortingAlgorithm(g, maxValue, maxBarHeight);
+            paintComponentForSortingAlgorithm(g, maxArrayValue, maxBarHeight);
         } else {
             int x = 5;
             int width = (getWidth() / data.size()) - spaceBetweenBars;
@@ -179,7 +179,7 @@ public class MainPanel extends JPanel implements ActionListener {
             }
 
             for (int i = 0; i < data.size(); i++) {
-                fillRectangle(g, i, maxValue, maxBarHeight, x, width);
+                fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width);
                 x += (width + spaceBetweenBars);
             }
         }
@@ -239,10 +239,8 @@ public class MainPanel extends JPanel implements ActionListener {
                 resetVariablesAfterSorting();
                 setRunningTimeLabel();
                 bubbleSort.setRunning(false);
-            } else if(bubbleSort.justSwappedElements()) {
-                bubbleSort.moveToNextStep(data);
             } else {
-                bubbleSort.swap(data);
+                bubbleSort.moveToNextStepInVisualisation(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -257,7 +255,7 @@ public class MainPanel extends JPanel implements ActionListener {
             resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = BubbleSort.NAME;
-            bubbleSort.moveToNextStep(data);
+            bubbleSort.moveToNextStepInVisualisation(data);
         }
 
         repaint();
@@ -280,7 +278,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 insertionSort.setRunning(false);
             } else {
-                insertionSort.moveToNextStep(data);
+                insertionSort.moveToNextStepInVisualisation(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -295,7 +293,7 @@ public class MainPanel extends JPanel implements ActionListener {
             resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = InsertionSort.NAME;
-            insertionSort.moveToNextStep(data);
+            insertionSort.moveToNextStepInVisualisation(data);
         }
 
         repaint();
@@ -318,7 +316,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 mergeSort.setRunning(false);
             } else {
-                mergeSort.moveToNextStep(data);
+                mergeSort.moveToNextStepInVisualisation(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -333,7 +331,7 @@ public class MainPanel extends JPanel implements ActionListener {
             resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = MergeSort.NAME;
-            mergeSort.moveToNextStep(data);
+            mergeSort.moveToNextStepInVisualisation(data);
         }
 
         repaint();
@@ -356,7 +354,7 @@ public class MainPanel extends JPanel implements ActionListener {
                 setRunningTimeLabel();
                 timSort.setRunning(false);
             } else {
-                timSort.moveToNextStep(data);
+                timSort.moveToNextStepInVisualisation(data);
             }
         } else if(sortButtonClicked(e)) {
             int sortingSpeedSliderValue = sortingSpeedSlider.getValue();
@@ -371,7 +369,7 @@ public class MainPanel extends JPanel implements ActionListener {
             resetVariablesBeforeSorting();
             resetRunningTime();
             sortingAlgorithmRunning = TimSort.NAME;
-            timSort.moveToNextStep(data);
+            timSort.moveToNextStepInVisualisation(data);
         }
 
         repaint();
@@ -424,40 +422,40 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void paintComponentForSortingAlgorithm(Graphics g, int maxValue, int maxBarHeight) {
+    private void paintComponentForSortingAlgorithm(Graphics g, int maxArrayValue, int maxBarHeight) {
         switch (sortingAlgorithmRunning) {
             case(BubbleSort.NAME):
-                paintComponentForBubbleSort(g, maxValue, maxBarHeight);
+                paintComponentForBubbleSort(g, maxArrayValue, maxBarHeight);
                 break;
             case(InsertionSort.NAME):
-                paintComponentForInsertionSort(g, maxValue, maxBarHeight);
+                paintComponentForInsertionSort(g, maxArrayValue, maxBarHeight);
                 break;
             case(MergeSort.NAME):
-                paintComponentForMergeSort(g, maxValue, maxBarHeight);
+                paintComponentForMergeSort(g, maxArrayValue, maxBarHeight);
                 break;
             case(TimSort.NAME):
-                paintComponentForTimSort(g, maxValue, maxBarHeight);
+                paintComponentForTimSort(g, maxArrayValue, maxBarHeight);
                 break;
             default:
                 break;
         }
     }
 
-    private void paintComponentForBubbleSort(Graphics g, int maxValue, int maxBarHeight) {
-        int[] pointers = bubbleSort.getForLoopVariables();
-        int x = 5;
-        int width = (getWidth() / data.size()) - spaceBetweenBars;
+    private void paintComponentForBubbleSort(Graphics g, int maxArrayValue, int maxBarHeight) {
+        int[] forLoopVariables = bubbleSort.getForLoopVariables();
+        int xCoordinate = 5;
+        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
-            if(bubbleSort.sorted()) {
+            if (bubbleSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if(bubbleSort.running() && contains(pointers, i)) {
+            } else if (bubbleSort.running() && contains(forLoopVariables, i)) {
                 g.setColor(Color.CYAN);
             } else {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxValue, maxBarHeight, x, width);
-            x += (width + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
 
@@ -555,9 +553,9 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
+    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int xCoordinate, int width) {
         int height = (int)(((double)data.get(index) / maxValue) * maxBarHeight);
-        g.fillRect(x, 0, width, height);
+        g.fillRect(xCoordinate, 0, width, height);
     }
 
     private boolean contains(int[] arr, final int key) {

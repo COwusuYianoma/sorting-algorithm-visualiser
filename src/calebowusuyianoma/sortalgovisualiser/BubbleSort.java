@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class BubbleSort extends Sort {
     public static final String NAME = "Bubblesort";
 
-    private boolean justSwappedElements;
     private int outerForLoopVariable, innerForLoopVariable;
 
     public void sort(ArrayList<Integer> data) {
@@ -24,34 +23,44 @@ public class BubbleSort extends Sort {
         data.set(key - 1, temp);
     }
 
-    public void moveToNextStep(ArrayList<Integer> data) {
-        if (!running() && innerForLoopVariable == 0) {
-            innerForLoopVariable = data.size() - 1;
+    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
+        if (!running()) {
+            initialiseForLoopVariablesBeforeSorting(data);
             setRunning(true);
-        } else if (innerForLoopVariable > outerForLoopVariable + 1) {
+        } else if(!innerForLoopTerminationExpressionValid()) {
+            if (shouldSwap(data)) {
+                swap(data, innerForLoopVariable);
+            }
             innerForLoopVariable--;
-            justSwappedElements = false;
-        } else if (outerForLoopVariable < data.size() - 1) {
-            outerForLoopVariable++;
+
+            if(innerForLoopTerminationExpressionValid()) {
+                outerForLoopVariable++;
+            }
+        } else if(!outerForLoopTerminationExpressionValid(data)) {
             innerForLoopVariable = data.size() - 1;
-            justSwappedElements = false;
         } else {
             setSorted(true);
         }
     }
 
-    public void swap(ArrayList<Integer> data) {
-        if (data.get(innerForLoopVariable) < data.get(innerForLoopVariable - 1)) {
-            swap(data, innerForLoopVariable);
-        }
-        justSwappedElements = true;
+    private void initialiseForLoopVariablesBeforeSorting(ArrayList<Integer> data) {
+        outerForLoopVariable = 0;
+        innerForLoopVariable = data.size() - 1;
+    }
+
+    private boolean innerForLoopTerminationExpressionValid() {
+        return innerForLoopVariable <= outerForLoopVariable;
+    }
+
+    private boolean shouldSwap(ArrayList<Integer> data) {
+        return data.get(innerForLoopVariable) < data.get(innerForLoopVariable - 1);
+    }
+
+    private boolean outerForLoopTerminationExpressionValid(ArrayList<Integer> data) {
+        return outerForLoopVariable >= data.size() - 1;
     }
 
     public int[] getForLoopVariables() {
         return new int[] {outerForLoopVariable, innerForLoopVariable};
-    }
-
-    public boolean justSwappedElements() {
-        return justSwappedElements;
     }
 }

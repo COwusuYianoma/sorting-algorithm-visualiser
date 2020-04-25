@@ -51,10 +51,10 @@ class BubbleSortTest {
     @Test
     public void sortExecutesCorrectlyOnRandomData() {
         ArrayGenerator arrayGenerator = new ArrayGenerator();
-        int size = arrayGenerator.getRandomNumberInRange(1, 1000);
+        int size = arrayGenerator.generateRandomIntegerInRange(1, 1000);
         int minimumPossibleValue = 1;
         int maximumPossibleValue = 2000;
-        ArrayList<Integer> data = arrayGenerator.generateRandomArray(size, minimumPossibleValue, maximumPossibleValue);
+        ArrayList<Integer> data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
 
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());

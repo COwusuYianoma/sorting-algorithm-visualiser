@@ -28,7 +28,7 @@ public class MergeSort extends Sort {
         return merged;
     }
 
-    public void moveToNextStep(ArrayList<Integer> data) {
+    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
         if(!running()) {
             Map<String, Integer> pointerMap = new HashMap<>();
             pointerMap.put(LOW, 0);

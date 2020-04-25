@@ -38,7 +38,7 @@ public class TimSort extends Sort {
         return insertionSorting;
     }
 
-    public void moveToNextStep(ArrayList<Integer> data) {
+    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
         if(!running()) {
             setRunning(true);
             numberOfElements = data.size();

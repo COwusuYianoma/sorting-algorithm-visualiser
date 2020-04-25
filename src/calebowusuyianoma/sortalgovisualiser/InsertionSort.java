@@ -15,7 +15,7 @@ public class InsertionSort extends Sort {
         return key;
     }
 
-    public void moveToNextStep(ArrayList<Integer> data) {
+    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
         if(!running()) {
             setRunning(true);
             keyIndex = 1;

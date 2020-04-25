@@ -25,8 +25,8 @@ public class BubbleSort extends Sort {
 
     public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
         if (!running()) {
-            initialiseForLoopVariablesBeforeSorting(data);
             setRunning(true);
+            initialiseForLoopVariablesBeforeSorting(data);
         } else if(!innerForLoopTerminationExpressionValid()) {
             if (shouldSwap(data)) {
                 swap(data, innerForLoopVariable);

@@ -459,16 +459,16 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void paintComponentForInsertionSort(Graphics g, int maxValue, int maxBarHeight) {
+    private void paintComponentForInsertionSort(Graphics g, int maxArrayValue, int maxBarHeight) {
         int keyIndex = insertionSort.getKeyIndex();
         int key = insertionSort.getKey();
-        int x = 5;
-        int width = (getWidth() / data.size()) - spaceBetweenBars;
-        for(int i = 0; i < data.size(); i++) {
-            if(i < keyIndex) {
+        int xCoordinate = 5;
+        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
+        for (int i = 0; i < data.size(); i++) {
+            if (i < keyIndex) {
                 g.setColor(Color.ORANGE);
-            } else if(i == keyIndex) {
-                if(data.get(i) == key) {
+            } else if (i == keyIndex) {
+                if (data.get(i) == key) {
                     g.setColor(Color.CYAN);
                 } else {
                     g.setColor(Color.ORANGE);
@@ -477,8 +477,8 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxValue, maxBarHeight, x, width);
-            x += (width + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
 

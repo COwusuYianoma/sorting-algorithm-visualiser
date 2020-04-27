@@ -1,14 +1,16 @@
 package calebowusuyianoma.sortalgovisualiser;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MergeSort extends Sort {
-    public static final String NAME = "Merge sort";
-    public static final String LOW = "low";
-    public static final String MIDDLE = "middle";
-    public static final String HIGH = "high";
+    private static final String NAME = "Merge sort";
+    private static final String LOW = "low";
+    private static final String MIDDLE = "middle";
+    private static final String HIGH = "high";
 
     private boolean justCalculatedMiddle;
     private int currentTreeNode;
@@ -148,5 +150,63 @@ public class MergeSort extends Sort {
                 j++;
             }
         }
+    }
+
+//    public void paintComponentForVisualisation(int panelWidth, ArrayList<Integer> data, int spaceBetweenBars,
+//                                               Graphics g, int maxArrayValue, int maxBarHeight) {
+//
+//        int currentTreeNode = data.size() - 1;
+//        Map<String, Integer> pointerMap = new HashMap<>();
+//        Map<Integer, Boolean> merged = new HashMap<>();
+//        if (running()) {
+//            currentTreeNode = getCurrentTreeNode();
+//            Map<Integer, Map<String, Integer>> pointerMaps = getPointerMaps();
+//            pointerMap = pointerMaps.get(currentTreeNode);
+//            merged = getMerged();
+//        }
+//
+//        int x = 5;
+//        int width = (panelWidth / data.size()) - spaceBetweenBars;
+//        for (int i = 0; i < data.size(); i++) {
+//            if(sorted()) {
+//                g.setColor(Color.MAGENTA);
+//            } else if (running() && merged.containsKey(currentTreeNode)) {
+//                if(pointerMap.get(MergeSort.getLow()) <= i && pointerMap.get(MergeSort.getHigh()) >= i) {
+//                    g.setColor(Color.MAGENTA);
+//                } else {
+//                    g.setColor(Color.BLACK);
+//                }
+//            } else if (running() && pointerMap.containsValue(i)) {
+//                if((pointerMap.get(MergeSort.getLow()) == i || pointerMap.get(MergeSort.getHigh()) == i)
+//                        && pointerMap.get(MergeSort.getMiddle()) == i) {
+//                    g.setColor(Color.GREEN);
+//                } else if (pointerMap.get(MergeSort.getMiddle()) == i) {
+//                    g.setColor(Color.YELLOW);
+//                } else {
+//                    g.setColor(Color.CYAN);
+//                }
+//            } else {
+//                g.setColor(Color.BLACK);
+//            }
+//
+//            PaintUtilities.fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width, data);
+//            x += (width + spaceBetweenBars);
+//        }
+//    }
+
+    public static String getName() {
+        return NAME;
+    }
+
+    public static String getLow() {
+        return LOW;
+    }
+
+    public static String getMiddle() {
+        return MIDDLE;
+    }
+
+    public static String getHigh() {
+        return HIGH;
     }
 }

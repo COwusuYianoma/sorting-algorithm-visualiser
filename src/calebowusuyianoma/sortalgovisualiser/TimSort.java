@@ -1,9 +1,11 @@
 package calebowusuyianoma.sortalgovisualiser;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class TimSort extends Sort {
-    public static final String NAME = "timsort";
+    private static final String NAME = "timsort";
 
     private final int minRun = 32;
     private final InsertionSort insertionSort = new InsertionSort();
@@ -117,7 +119,44 @@ public class TimSort extends Sort {
         }
     }
 
+//    public void paintComponentForVisualisation(int panelWidth, ArrayList<Integer> data, int spaceBetweenBars,
+//                                               Graphics g, int maxArrayValue, int maxBarHeight) {
+
+        //int left = timSort.getLeft();
+//        int keyIndex = timSort.getKeyIndex();
+//        int key = timSort.getKey();
+//        int mergeStartIndex = timSort.getMergeStartIndex();
+//        int mergeEndIndex = timSort.getMergeEndIndex();
+//        boolean insertionSorting = timSort.isInsertionSorting();
+//        int x = 5;
+//        int width = (panelWidth / data.size()) - spaceBetweenBars;
+//        for (int i = 0; i < data.size(); i++) {
+//            if(sorted()) {
+//                g.setColor(Color.MAGENTA);
+//            } else if(i >= left && i < keyIndex) {
+//                g.setColor(Color.ORANGE);
+//            } else if(i == keyIndex) {
+//                if(data.get(i) == key) {
+//                    g.setColor(Color.CYAN);
+//                } else {
+//                    g.setColor(Color.ORANGE);
+//                }
+//            } else if(!insertionSorting && i >= mergeStartIndex && i <= mergeEndIndex) {
+//                g.setColor(Color.ORANGE);
+//            } else {
+//                g.setColor(Color.BLACK);
+//            }
+//
+//            PaintUtilities.fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width, data);
+//            x += (width + spaceBetweenBars);
+//        }
+//    }
+
     private int calculateRight() {
         return Math.min(insertionSortLoopIndex + minRun - 1, numberOfElements - 1);
+    }
+
+    public static String getName() {
+        return NAME;
     }
 }

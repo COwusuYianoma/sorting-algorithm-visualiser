@@ -13,6 +13,10 @@ public class ArrayGenerator {
     }
 
     public int generateRandomIntegerInRange(int min, int max) {
+        if (max < min) {
+            throw new IllegalArgumentException("max should be >= min, but max is " + max + " and min is " + min);
+        }
+
         return (int) ((Math.random() * (max - min + 1)) + min);
     }
 }

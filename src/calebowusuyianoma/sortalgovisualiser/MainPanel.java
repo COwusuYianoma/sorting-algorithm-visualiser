@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import static java.util.Collections.max;
 
@@ -316,7 +317,7 @@ public class MainPanel extends JPanel implements ActionListener {
             }
 
             for (int i = 0; i < data.size(); i++) {
-                PaintUtilities.fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth, data);
+                fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
                 x += (barWidth + spaceBetweenBars);
             }
         }
@@ -361,6 +362,15 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
+    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
+        int height = (int) (((double) data.get(index) / maxValue) * maxBarHeight);
+        g.fillRect(x, 0, width, height);
+    }
+
+    private boolean contains(int[] arr, final int key) {
+        return Arrays.stream(arr).anyMatch(i -> i == key);
+    }
+
     private void paintComponentForInsertionSort(Graphics g, int maxArrayValue, int maxBarHeight) {
         int keyIndex = insertionSort.getKeyIndex();
         int key = insertionSort.getKey();
@@ -385,32 +395,25 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void paintComponentForMergeSort(Graphics g, int maxArrayValue, int maxBarHeight) {
-        int currentTreeNode = data.size() - 1;
-        Map<String, Integer> pointerMap = new HashMap<>();
-        Map<Integer, Boolean> merged = new HashMap<>();
-        if(mergeSort.running()) {
-            currentTreeNode = mergeSort.getCurrentTreeNode();
-            Map<Integer, Map<String, Integer>> pointerMaps = mergeSort.getPointerMaps();
-            pointerMap = pointerMaps.get(currentTreeNode);
-            merged = mergeSort.getMerged();
-        }
-
+        int currentTreeNode = mergeSort.getCurrentTreeNode();
+        Map<String, Integer> currentTreeNodePointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
+        Map<Integer, Boolean> mergedTreeNodes = mergeSort.getMergedTreeNodes();
         int x = 5;
-        int width = (getWidth() / data.size()) - spaceBetweenBars;
+        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
-            if(mergeSort.sorted()) {
+            if (mergeSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if(mergeSort.running() && merged.containsKey(currentTreeNode)) {
-                if(pointerMap.get(MergeSort.LOW) <= i && pointerMap.get(MergeSort.HIGH) >= i) {
+            } else if (mergeSort.running() && mergedTreeNodes.containsKey(currentTreeNode)) {
+                if (currentTreeNodePointerMap.get(MergeSort.getLow()) <= i && currentTreeNodePointerMap.get(MergeSort.getHigh()) >= i) {
                     g.setColor(Color.MAGENTA);
                 } else {
                     g.setColor(Color.BLACK);
                 }
-            } else if(mergeSort.running() && pointerMap.containsValue(i)) {
-                if((pointerMap.get(MergeSort.LOW) == i || pointerMap.get(MergeSort.HIGH) == i)
-                        && pointerMap.get(MergeSort.MIDDLE) == i) {
+            } else if (mergeSort.running() && currentTreeNodePointerMap.containsValue(i)) {
+                if ((currentTreeNodePointerMap.get(MergeSort.getLow()) == i || currentTreeNodePointerMap.get(MergeSort.getHigh()) == i)
+                        && currentTreeNodePointerMap.get(MergeSort.getMiddle()) == i) {
                     g.setColor(Color.GREEN);
-                } else if(pointerMap.get(MergeSort.MIDDLE) == i) {
+                } else if(currentTreeNodePointerMap.get(MergeSort.getMiddle()) == i) {
                     g.setColor(Color.YELLOW);
                 } else {
                     g.setColor(Color.CYAN);
@@ -419,8 +422,8 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width);
-            x += (width + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
+            x += (barWidth + spaceBetweenBars);
         }
     }
 
@@ -453,14 +456,5 @@ public class MainPanel extends JPanel implements ActionListener {
             fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width);
             x += (width + spaceBetweenBars);
         }
-    }
-
-    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
-        int height = (int)(((double)data.get(index) / maxValue) * maxBarHeight);
-        g.fillRect(x, 0, width, height);
-    }
-
-    private boolean contains(int[] arr, final int key) {
-        return Arrays.stream(arr).anyMatch(i -> i == key);
     }
 }

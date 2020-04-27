@@ -1,7 +1,5 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class InsertionSort extends Sort {
@@ -55,29 +53,6 @@ public class InsertionSort extends Sort {
         data.set(sortedElementIndex + 1, data.get(sortedElementIndex));
         sortedElementIndex -= 1;
     }
-
-//    public void paintComponentForVisualisation(int panelWidth, ArrayList<Integer> data, int spaceBetweenBars,
-//                                               Graphics g, int maxArrayValue, int maxBarHeight) {
-//
-//        int xCoordinate = 5;
-//        int barWidth = (panelWidth / data.size()) - spaceBetweenBars;
-//        for (int i = 0; i < data.size(); i++) {
-//            if (i < keyIndex) {
-//                g.setColor(Color.ORANGE);
-//            } else if (i == keyIndex) {
-//                if (data.get(i) == key) {
-//                    g.setColor(Color.CYAN);
-//                } else {
-//                    g.setColor(Color.ORANGE);
-//                }
-//            } else {
-//                g.setColor(Color.BLACK);
-//            }
-//
-//            PaintUtilities.fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
-//            xCoordinate += (barWidth + spaceBetweenBars);
-//        }
-//    }
 
     public static String getName() {
         return NAME;

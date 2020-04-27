@@ -1,9 +1,6 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class BubbleSort extends Sort {
     private static final String NAME = "Bubblesort";
@@ -62,29 +59,6 @@ public class BubbleSort extends Sort {
     private boolean outerForLoopTerminationExpressionValid(ArrayList<Integer> data) {
         return outerForLoopVariable >= data.size() - 1;
     }
-
-//    public void paintComponentForVisualisation(int panelWidth, ArrayList<Integer> data, int spaceBetweenBars,
-//                                               Graphics g, int maxArrayValue, int maxBarHeight) {
-//
-//        int xCoordinate = 5;
-//        int barWidth = (panelWidth / data.size()) - spaceBetweenBars;
-//        for (int i = 0; i < data.size(); i++) {
-//            if (sorted()) {
-//                g.setColor(Color.MAGENTA);
-//            } else if (running() && contains(getForLoopVariables(), i)) {
-//                g.setColor(Color.CYAN);
-//            } else {
-//                g.setColor(Color.BLACK);
-//            }
-//
-//            PaintUtilities.fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
-//            xCoordinate += (barWidth + spaceBetweenBars);
-//        }
-//    }
-//
-//    private boolean contains(int[] arr, final int key) {
-//        return Arrays.stream(arr).anyMatch(i -> i == key);
-//    }
 
     public static String getName() {
         return NAME;

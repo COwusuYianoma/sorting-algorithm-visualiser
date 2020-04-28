@@ -46,7 +46,7 @@ public class InsertionSort extends Sort {
     }
 
     private boolean keyLessThanSortedElement(ArrayList<Integer> data) {
-        return sortedElementIndex >= 0 && data.get(sortedElementIndex) > key;
+        return (sortedElementIndex >= 0) && (data.get(sortedElementIndex) > key);
     }
 
     private void shiftSortedElementToTheRight(ArrayList<Integer> data) {

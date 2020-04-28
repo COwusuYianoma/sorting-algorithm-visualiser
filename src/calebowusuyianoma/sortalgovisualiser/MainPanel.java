@@ -137,23 +137,23 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void respondToSortingSpeedSliderChange(ChangeEvent e) {
-        if (sorting) {
-            JSlider source = (JSlider) e.getSource();
-            if (!source.getValueIsAdjusting()) {
-                int sortingSpeed = source.getValue();
-                if (sortingSpeed == 0) {
-                    timer.stop();
-                    long currentTime = System.currentTimeMillis();
-                    runningTime += currentTime - startTime;
-                    startTime = 0;
-                } else {
-                    int delay = timerDelayMultiplier / sortingSpeed;
-                    timer.setDelay(delay);
-                    if (!timer.isRunning()) {
-                        timer.start();
-                        startTime = System.currentTimeMillis();
-                    }
-                }
+        if (!sorting) return;
+
+        JSlider source = (JSlider) e.getSource();
+        if (source.getValueIsAdjusting()) return;
+
+        int sortingSpeed = source.getValue();
+        if (sortingSpeed == 0) {
+            timer.stop();
+            long currentTime = System.currentTimeMillis();
+            runningTime += currentTime - startTime;
+            startTime = 0;
+        } else {
+            int delay = timerDelayMultiplier / sortingSpeed;
+            timer.setDelay(delay);
+            if (!timer.isRunning()) {
+                timer.start();
+                startTime = System.currentTimeMillis();
             }
         }
     }
@@ -224,7 +224,11 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private boolean sortButtonClickedWhenSortingSpeedIsZero(ActionEvent e) {
-        return e.getActionCommand().equals("Sort") && sortingSpeedSlider.getValue() == 0;
+        return sortButtonClicked(e) && (sortingSpeedSlider.getValue() == 0);
+    }
+
+    private boolean sortButtonClicked(ActionEvent e) {
+        return (e.getActionCommand() != null) && (e.getActionCommand().equals("Sort"));
     }
 
     private void updateFinalRunningTime() {
@@ -301,15 +305,14 @@ public class MainPanel extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        int xCoordinate = 5;
+        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
         int maxBarHeight = getHeight() - 150;
         int maxArrayValue = max(data);
 
         if (sorting) {
-            paintComponentForSortingAlgorithm(g, maxArrayValue, maxBarHeight);
+            paintComponentForSortingAlgorithm(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
         } else {
-            int x = 5;
-            int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
-
             if (sortingAlgorithmJustRan) {
                 g.setColor(Color.MAGENTA);
             } else {
@@ -317,25 +320,27 @@ public class MainPanel extends JPanel implements ActionListener {
             }
 
             for (int i = 0; i < data.size(); i++) {
-                fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
-                x += (barWidth + spaceBetweenBars);
+                fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+                xCoordinate += (barWidth + spaceBetweenBars);
             }
         }
     }
 
-    private void paintComponentForSortingAlgorithm(Graphics g, int maxArrayValue, int maxBarHeight) {
+    private void paintComponentForSortingAlgorithm(Graphics g, int maxArrayValue, int maxBarHeight,
+                                                   int xCoordinate, int barWidth) {
+
         switch (mapSortingAlgorithmStringToEnum(sortingAlgorithmRunning)) {
             case BUBBLESORT:
-                paintComponentForBubbleSort(g, maxArrayValue, maxBarHeight);
+                paintComponentForBubbleSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
                 break;
             case INSERTIONSORT:
-                paintComponentForInsertionSort(g, maxArrayValue, maxBarHeight);
+                paintComponentForInsertionSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
                 break;
             case MERGESORT:
-                paintComponentForMergeSort(g, maxArrayValue, maxBarHeight);
+                paintComponentForMergeSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
                 break;
             case TIMSORT:
-                paintComponentForTimSort(g, maxArrayValue, maxBarHeight);
+                paintComponentForTimSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
                 break;
             case UNKNOWN:
             default:
@@ -344,10 +349,10 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void paintComponentForBubbleSort(Graphics g, int maxArrayValue, int maxBarHeight) {
+    private void paintComponentForBubbleSort(Graphics g, int maxArrayValue, int maxBarHeight,
+                                             int xCoordinate, int barWidth) {
+
         int[] forLoopVariables = bubbleSort.getForLoopVariables();
-        int x = 5;
-        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
             if (bubbleSort.sorted()) {
                 g.setColor(Color.MAGENTA);
@@ -357,25 +362,25 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
-            x += (barWidth + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
 
-    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int x, int width) {
+    private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int xCoordinate, int width) {
         int height = (int) (((double) data.get(index) / maxValue) * maxBarHeight);
-        g.fillRect(x, 0, width, height);
+        g.fillRect(xCoordinate, 0, width, height);
     }
 
     private boolean contains(int[] arr, final int key) {
         return Arrays.stream(arr).anyMatch(i -> i == key);
     }
 
-    private void paintComponentForInsertionSort(Graphics g, int maxArrayValue, int maxBarHeight) {
+    private void paintComponentForInsertionSort(Graphics g, int maxArrayValue, int maxBarHeight,
+                                                int xCoordinate, int barWidth) {
+
         int keyIndex = insertionSort.getKeyIndex();
         int key = insertionSort.getKey();
-        int x = 5;
-        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
         for (int i = 0; i < data.size(); i++) {
             if (i < keyIndex) {
                 g.setColor(Color.ORANGE);
@@ -389,31 +394,30 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
-            x += (barWidth + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
 
-    private void paintComponentForMergeSort(Graphics g, int maxArrayValue, int maxBarHeight) {
+    private void paintComponentForMergeSort(Graphics g, int maxArrayValue, int maxBarHeight,
+                                            int xCoordinate, int barWidth) {
+
         int currentTreeNode = mergeSort.getCurrentTreeNode();
         Map<String, Integer> currentTreeNodePointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
-        Map<Integer, Boolean> mergedTreeNodes = mergeSort.getMergedTreeNodes();
-        int x = 5;
-        int barWidth = (getWidth() / data.size()) - spaceBetweenBars;
+        Map<Integer, Boolean> sortedTreeNodes = mergeSort.getSortedTreeNodes();
         for (int i = 0; i < data.size(); i++) {
             if (mergeSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if (mergeSort.running() && mergedTreeNodes.containsKey(currentTreeNode)) {
-                if (currentTreeNodePointerMap.get(MergeSort.getLow()) <= i && currentTreeNodePointerMap.get(MergeSort.getHigh()) >= i) {
+            } else if (sortedTreeNodes.containsKey(currentTreeNode)) {
+                if (currentElementIsInSubArrayThatWasJustSorted(currentTreeNodePointerMap, i)) {
                     g.setColor(Color.MAGENTA);
                 } else {
                     g.setColor(Color.BLACK);
                 }
-            } else if (mergeSort.running() && currentTreeNodePointerMap.containsValue(i)) {
-                if ((currentTreeNodePointerMap.get(MergeSort.getLow()) == i || currentTreeNodePointerMap.get(MergeSort.getHigh()) == i)
-                        && currentTreeNodePointerMap.get(MergeSort.getMiddle()) == i) {
+            } else if (currentTreeNodePointerMap.containsValue(i)) {
+                if (currentElementCorrespondsToMultiplePointers(currentTreeNodePointerMap, i)) {
                     g.setColor(Color.GREEN);
-                } else if(currentTreeNodePointerMap.get(MergeSort.getMiddle()) == i) {
+                } else if (currentElementOnlyCorrespondsToMiddlePointer(currentTreeNodePointerMap, i)) {
                     g.setColor(Color.YELLOW);
                 } else {
                     g.setColor(Color.CYAN);
@@ -422,39 +426,69 @@ public class MainPanel extends JPanel implements ActionListener {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, barWidth);
-            x += (barWidth + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
 
-    private void paintComponentForTimSort(Graphics g, int maxArrayValue, int maxBarHeight) {
+    private boolean currentElementIsInSubArrayThatWasJustSorted(Map<String, Integer> currentTreeNodePointerMap,
+                                                                int index) {
+
+        return (currentTreeNodePointerMap.get(MergeSort.getLow()) <= index) &&
+                (currentTreeNodePointerMap.get(MergeSort.getHigh()) >= index);
+    }
+
+    private boolean currentElementCorrespondsToMultiplePointers(Map<String, Integer> currentTreeNodePointerMap,
+                                                                int index) {
+
+        return (currentTreeNodePointerMap.get(MergeSort.getLow()) == index ||
+                currentTreeNodePointerMap.get(MergeSort.getHigh()) == index) &&
+                (currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index);
+    }
+
+    private boolean currentElementOnlyCorrespondsToMiddlePointer(Map<String, Integer> currentTreeNodePointerMap,
+                                                                 int index) {
+
+        return currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index;
+    }
+
+    private void paintComponentForTimSort(Graphics g, int maxArrayValue, int maxBarHeight,
+                                          int xCoordinate, int barWidth) {
+
         int left = timSort.getLeft();
         int keyIndex = timSort.getKeyIndex();
         int key = timSort.getKey();
-        int mergeStartIndex = timSort.getMergeStartIndex();
+        int previousMergeStartIndex = timSort.getPreviousMergeStartIndex();
         int mergeEndIndex = timSort.getMergeEndIndex();
-        boolean insertionSorting = timSort.isInsertionSorting();
-        int x = 5;
-        int width = (getWidth() / data.size()) - spaceBetweenBars;
+        boolean runningInsertionSort = timSort.runningInsertionSort();
         for (int i = 0; i < data.size(); i++) {
-            if(timSort.sorted()) {
+            if (timSort.sorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if(i >= left && i < keyIndex) {
+            } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i, left, keyIndex)) {
                 g.setColor(Color.ORANGE);
-            } else if(i == keyIndex) {
-                if(data.get(i) == key) {
+            } else if (runningInsertionSort && i == keyIndex) {
+                if (data.get(i) == key) {
                     g.setColor(Color.CYAN);
                 } else {
                     g.setColor(Color.ORANGE);
                 }
-            } else if(!insertionSorting && i >= mergeStartIndex && i <= mergeEndIndex) {
+            } else if (!runningInsertionSort && currentElementIsBeingMerged(i, previousMergeStartIndex, mergeEndIndex)) {
                 g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, x, width);
-            x += (width + spaceBetweenBars);
+            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            xCoordinate += (barWidth + spaceBetweenBars);
         }
+    }
+
+    private boolean currentElementIsPartOfSortedInsertionSortSubArray(int index, int left, int keyIndex) {
+        return (index >= left) && (index < keyIndex);
+    }
+
+    private boolean currentElementIsBeingMerged(int index, int mergeStartIndex, int mergeEndIndex) {
+
+        return (index >= mergeStartIndex) && (index <= mergeEndIndex);
     }
 }

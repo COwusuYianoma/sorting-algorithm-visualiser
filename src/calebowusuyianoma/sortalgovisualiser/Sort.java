@@ -1,6 +1,5 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-// import java.awt.Graphics;
 import java.util.ArrayList;
 
 public abstract class Sort {
@@ -23,7 +22,4 @@ public abstract class Sort {
     }
 
     protected abstract void moveToNextStepInVisualisation(ArrayList<Integer> data);
-
-    //protected abstract void paintComponentForVisualisation(int panelWidth, ArrayList<Integer> data, int spaceBetweenBars,
-      //                                                     Graphics g, int maxArrayValue, int maxBarHeight);
 }

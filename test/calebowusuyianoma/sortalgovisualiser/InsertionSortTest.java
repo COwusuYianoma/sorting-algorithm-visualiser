@@ -11,11 +11,12 @@ class InsertionSortTest {
     private final InsertionSort insertionSort = new InsertionSort();
     private final TestUtilities testUtilities = new TestUtilities();
 
+    private ArrayList<Integer> data;
     private ArrayList<Integer> expected;
 
     @Test
     public void sortLeavesDataUnchangedWhenDataIsEmpty() {
-        ArrayList<Integer> data = new ArrayList<>();
+        data = new ArrayList<>();
         insertionSort.sort(data);
 
         Assertions.assertTrue(data.isEmpty());
@@ -23,7 +24,7 @@ class InsertionSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataNearlySorted() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
+        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
         insertionSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
@@ -32,7 +33,7 @@ class InsertionSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataIsReversed() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
         insertionSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
@@ -41,7 +42,7 @@ class InsertionSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
-        ArrayList<Integer> data = new ArrayList<>(Collections.singletonList(6));
+        data = new ArrayList<>(Collections.singletonList(6));
         insertionSort.sort(data);
         ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
@@ -54,7 +55,7 @@ class InsertionSortTest {
         int size = arrayGenerator.generateRandomIntegerInRange(1, 1000);
         int minimumPossibleValue = 1;
         int maximumPossibleValue = 2000;
-        ArrayList<Integer> data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
+        data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
 
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());

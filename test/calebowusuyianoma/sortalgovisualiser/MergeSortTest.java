@@ -11,11 +11,12 @@ class MergeSortTest {
     private final MergeSort mergeSort = new MergeSort();
     private final TestUtilities testUtilities = new TestUtilities();
 
+    private ArrayList<Integer> data;
     private ArrayList<Integer> expected;
 
     @Test
     public void sortExecutesCorrectlyWhenDataNearlySorted() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
+        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
         mergeSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
@@ -24,7 +25,7 @@ class MergeSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataIsReversed() {
-        ArrayList<Integer> data = new ArrayList<>(Arrays.asList(6, 5, 4, 3, 2, 1));
+        data = new ArrayList<>(Arrays.asList(6, 5, 4, 3, 2, 1));
         mergeSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
 
@@ -33,7 +34,7 @@ class MergeSortTest {
 
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
-        ArrayList<Integer> data = new ArrayList<>(Collections.singletonList(6));
+        data = new ArrayList<>(Collections.singletonList(6));
         mergeSort.sort(data);
         expected = new ArrayList<>(Collections.singletonList(6));
 
@@ -46,7 +47,7 @@ class MergeSortTest {
         int size = arrayGenerator.generateRandomIntegerInRange(1, 1000);
         int minimumPossibleValue = 1;
         int maximumPossibleValue = 2000;
-        ArrayList<Integer> data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
+        data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
 
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());

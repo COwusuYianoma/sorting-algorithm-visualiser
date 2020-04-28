@@ -34,7 +34,6 @@ class ArrayGeneratorTest {
     public void generateRandomIntegerInRangeThrowsIfMaxLessThanMin() {
         minimumPossibleValue = 50;
         maximumPossibleValue = 5;
-
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
                 () -> arrayGenerator.generateRandomIntegerInRange(minimumPossibleValue, maximumPossibleValue));
 

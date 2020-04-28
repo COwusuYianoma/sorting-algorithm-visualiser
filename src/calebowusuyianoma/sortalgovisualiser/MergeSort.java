@@ -10,11 +10,12 @@ public class MergeSort extends Sort {
     private static final String MIDDLE = "middle";
     private static final String HIGH = "high";
 
-    private boolean justCalculatedMiddle;
+    private boolean shouldCalculateMiddleIndex;
     private int currentTreeNode;
     private Map<Integer, Map<String, Integer>> treeNodePointerMaps;
-    private Map<Integer, Integer> parentNodes, numberOfTimesChildrenHaveBeenMerged;
-    private Map<Integer, Boolean> mergedTreeNodes;
+    private Map<Integer, Integer> parentNodes, numberOfSortedChildren;
+    private Map<Integer, Boolean> sortedTreeNodes;
+    private Map<String, Integer> currentPointerMap;
 
     public void sort(ArrayList<Integer> data) {
         sort(data, 0, data.size() - 1);
@@ -39,7 +40,8 @@ public class MergeSort extends Sort {
         leftSubArray.add(Integer.MAX_VALUE);
         rightSubArray.add(Integer.MAX_VALUE);
 
-        int i = 0, j = 0;
+        int i = 0;
+        int j = 0;
         for (int k = lowIndex; k < highIndex + 1; k++) {
             if (leftSubArray.get(i) < rightSubArray.get(j)) {
                 data.set(k, leftSubArray.get(i));
@@ -53,64 +55,38 @@ public class MergeSort extends Sort {
 
     public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
         if (!running() && data.size() > 1) {
-            initialiseMapsBeforeSorting(data);
             setRunning(true);
-        } else {
-            Map<String, Integer> currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
-            if (correspondsToUnmergedSubArrayContainingMultipleElements(currentPointerMap, currentTreeNode)) {
-                if (!justCalculatedMiddle) {
-                    currentPointerMap.put(MIDDLE, calculateMiddleIndex(currentPointerMap));
-                    justCalculatedMiddle = true;
-
-                    return;
-                }
-
-                int previousTreeNode = currentTreeNode;
-                int currentLow = currentPointerMap.get(LOW);
-                int newHigh = currentPointerMap.get(MIDDLE);
-                currentTreeNode = calculateUniqueNodeValue(currentLow, newHigh);
-
-                Map<String, Integer> pointerMap = new HashMap<>();
-                pointerMap.put(LOW, currentLow);
-                pointerMap.put(MIDDLE, Integer.MIN_VALUE);
-                pointerMap.put(HIGH, newHigh);
-                treeNodePointerMaps.put(currentTreeNode, pointerMap);
-
-                parentNodes.put(currentTreeNode, previousTreeNode);
-                numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, 0);
-
-                justCalculatedMiddle = false;
+            initialiseMapsBeforeSorting(data);
+            currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
+            shouldCalculateMiddleIndex = true;
+        } else if (unsortedSubArrayContainingMultipleElements(currentPointerMap, currentTreeNode)) {
+            if (shouldCalculateMiddleIndex) {
+                currentPointerMap.put(MIDDLE, calculateMiddleIndex(currentPointerMap));
+                shouldCalculateMiddleIndex = false;
             } else {
-                mergedTreeNodes.put(currentTreeNode, true);
-                currentTreeNode = parentNodes.get(currentTreeNode);
-                int numberOfTimesChildrenMerged = numberOfTimesChildrenHaveBeenMerged.get(currentTreeNode);
+                int previousTreeNode = currentTreeNode;
+                moveToLeftChild(currentPointerMap);
+                initialiseParentAndChildrenData(previousTreeNode);
+                shouldCalculateMiddleIndex = true;
+                currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
+            }
+        } else {
+            sortedTreeNodes.put(currentTreeNode, true);
+            currentTreeNode = parentNodes.get(currentTreeNode);
+            int sortedChildren = numberOfSortedChildren.get(currentTreeNode);
+            numberOfSortedChildren.put(currentTreeNode, ++sortedChildren);
+            currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
 
-                if(numberOfTimesChildrenMerged == 0) {
-                    numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, ++numberOfTimesChildrenMerged);
-                    int previousTreeNode = currentTreeNode;
-
-                    currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
-                    int currentMiddle = currentPointerMap.get(MIDDLE);
-                    int currentHigh = currentPointerMap.get(HIGH);
-                    int newLow = currentMiddle + 1;
-                    currentTreeNode = calculateUniqueNodeValue(newLow, currentHigh);
-
-                    Map<String, Integer> pointerMap = new HashMap<>();
-                    pointerMap.put(LOW, newLow);
-                    pointerMap.put(MIDDLE, Integer.MIN_VALUE);
-                    pointerMap.put(HIGH, currentHigh);
-                    treeNodePointerMaps.put(currentTreeNode, pointerMap);
-
-                    parentNodes.put(currentTreeNode, previousTreeNode);
-                    numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, 0);
-                } else {
-                    numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, ++numberOfTimesChildrenMerged);
-                    currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
-                    merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
-                    mergedTreeNodes.put(currentTreeNode, true);
-                    if(currentTreeNode == calculateUniqueNodeValue(0, data.size() - 1)) {
-                        setSorted(true);
-                    }
+            if (onlyLeftChildSorted(sortedChildren)) {
+                int previousTreeNode = currentTreeNode;
+                moveToRightChild(currentPointerMap);
+                currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
+                initialiseParentAndChildrenData(previousTreeNode);
+            } else {
+                merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
+                sortedTreeNodes.put(currentTreeNode, true);
+                if (currentTreeNodeIsRoot(data)) {
+                    setSorted(true);
                 }
             }
         }
@@ -122,32 +98,67 @@ public class MergeSort extends Sort {
         pointerMap.put(MIDDLE, Integer.MIN_VALUE);
         pointerMap.put(HIGH, data.size() - 1);
 
-        currentTreeNode = calculateUniqueNodeValue(0, data.size() - 1);
+        currentTreeNode = calculateUniqueNodeId(0, data.size() - 1);
         treeNodePointerMaps = new HashMap<>();
         treeNodePointerMaps.put(currentTreeNode, pointerMap);
-
         parentNodes = new HashMap<>();
         parentNodes.put(currentTreeNode, 0);
-
-        numberOfTimesChildrenHaveBeenMerged = new HashMap<>();
-        numberOfTimesChildrenHaveBeenMerged.put(currentTreeNode, 0);
-
-        mergedTreeNodes = new HashMap<>();
+        numberOfSortedChildren = new HashMap<>();
+        numberOfSortedChildren.put(currentTreeNode, 0);
+        sortedTreeNodes = new HashMap<>();
     }
 
-    private boolean correspondsToUnmergedSubArrayContainingMultipleElements(Map<String, Integer> currentPointerMap,
-                                                                            int currentTreeNode) {
+    private boolean unsortedSubArrayContainingMultipleElements(Map<String, Integer> currentPointerMap,
+                                                               int currentTreeNode) {
 
-        return (currentPointerMap.get(LOW) < currentPointerMap.get(HIGH) &&
-                !mergedTreeNodes.containsKey(currentTreeNode));
+        return (currentPointerMap.get(LOW) < currentPointerMap.get(HIGH)) &&
+                !sortedTreeNodes.containsKey(currentTreeNode);
     }
 
     private int calculateMiddleIndex(Map<String, Integer> currentPointerMap) {
         return (int) Math.floor((double) (currentPointerMap.get(LOW) + currentPointerMap.get(HIGH)) / 2);
     }
 
-    private int calculateUniqueNodeValue(int low, int high) {
+    private int calculateUniqueNodeId(int low, int high) {
         return ((Math.max(low, high) * (Math.max(low, high) + 1)) / 2) + Math.min(low, high);
+    }
+
+    private void moveToLeftChild(Map<String, Integer> currentPointerMap) {
+        int currentLow = currentPointerMap.get(LOW);
+        int newHigh = currentPointerMap.get(MIDDLE);
+        currentTreeNode = calculateUniqueNodeId(currentLow, newHigh);
+
+        Map<String, Integer> pointerMap = new HashMap<>();
+        pointerMap.put(LOW, currentLow);
+        pointerMap.put(MIDDLE, Integer.MIN_VALUE);
+        pointerMap.put(HIGH, newHigh);
+        treeNodePointerMaps.put(currentTreeNode, pointerMap);
+    }
+
+    private void initialiseParentAndChildrenData(int previousTreeNode) {
+        parentNodes.put(currentTreeNode, previousTreeNode);
+        numberOfSortedChildren.put(currentTreeNode, 0);
+    }
+
+    private boolean onlyLeftChildSorted(int sortedChildren) {
+        return sortedChildren == 1;
+    }
+
+    private void moveToRightChild(Map<String, Integer> currentPointerMap) {
+        int currentMiddle = currentPointerMap.get(MIDDLE);
+        int currentHigh = currentPointerMap.get(HIGH);
+        int newLow = currentMiddle + 1;
+        currentTreeNode = calculateUniqueNodeId(newLow, currentHigh);
+
+        Map<String, Integer> pointerMap = new HashMap<>();
+        pointerMap.put(LOW, newLow);
+        pointerMap.put(MIDDLE, Integer.MIN_VALUE);
+        pointerMap.put(HIGH, currentHigh);
+        treeNodePointerMaps.put(currentTreeNode, pointerMap);
+    }
+
+    private boolean currentTreeNodeIsRoot(ArrayList<Integer> data) {
+        return currentTreeNode == calculateUniqueNodeId(0, data.size() - 1);
     }
 
     public static String getName() {
@@ -174,7 +185,7 @@ public class MergeSort extends Sort {
         return treeNodePointerMaps;
     }
 
-    public Map<Integer, Boolean> getMergedTreeNodes() {
-        return mergedTreeNodes;
+    public Map<Integer, Boolean> getSortedTreeNodes() {
+        return sortedTreeNodes;
     }
 }

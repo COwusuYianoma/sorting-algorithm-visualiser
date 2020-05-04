@@ -48,7 +48,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int minimumPossibleValue = 1;
         int maximumPossibleValue = 100;
         ArrayGenerator arrayGenerator = new ArrayGenerator();
-        data = arrayGenerator.generateRandomIntegerArray(defaultArraySize, minimumPossibleValue, maximumPossibleValue);
+        data = arrayGenerator.generateRandomPositiveIntegerArray(defaultArraySize, minimumPossibleValue, maximumPossibleValue);
         setPreSortedData();
 
         JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
@@ -60,7 +60,7 @@ public class MainPanel extends JPanel implements ActionListener {
         generateArrayButton.addActionListener(e -> {
             if (!sorting) {
                 int arraySize = (int) arraySizeSpinner.getValue();
-                data = arrayGenerator.generateRandomIntegerArray(arraySize, minimumPossibleValue, maximumPossibleValue);
+                data = arrayGenerator.generateRandomPositiveIntegerArray(arraySize, minimumPossibleValue, maximumPossibleValue);
                 setPreSortedData();
                 sortingAlgorithmJustRan = false;
                 resetRunningTime();

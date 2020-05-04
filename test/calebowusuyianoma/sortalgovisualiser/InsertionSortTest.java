@@ -70,7 +70,7 @@ class InsertionSortTest {
     public void sortExecutesCorrectlyOnRandomData() {
         // Arrange
         int size = ThreadLocalRandom.current().nextInt(1, 1001);
-        data = ArrayGenerator.generateRandomIntegerArray(size, 1, 2001);
+        data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());
 

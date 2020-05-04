@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ArrayGenerator {
-    public static ArrayList<Integer> generateRandomIntegerArray(int size, int min, int max) {
+    public static ArrayList<Integer> generateRandomPositiveIntegerArray(int size, int min, int max) {
+        if ((min <= 0) || (max <= 0)) {
+            throw new IllegalArgumentException("max and min should be > 0, but max is " + max + " and min is " + min);
+        }
+
         if (max <= min) {
             throw new IllegalArgumentException("max should be > min, but max is " + max + " and min is " + min);
         }

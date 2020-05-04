@@ -13,10 +13,40 @@ class ArrayGeneratorTest {
         int size = ThreadLocalRandom.current().nextInt(0, 101);
 
         // Act
-        ArrayList<Integer> data = ArrayGenerator.generateRandomIntegerArray(size, 5, 50);
+        ArrayList<Integer> data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 5, 50);
 
         // Assert
         Assertions.assertEquals(size, data.size());
+    }
+
+    @Test
+    public void generateRandomIntegerArrayThrowsExceptionWhenMaxIsNonPositive() {
+        // Arrange
+        int min = 3;
+        int max = -3;
+        String expectedMessage = "max and min should be > 0, but max is " + max + " and min is " + min;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void generateRandomIntegerArrayThrowsExceptionWhenMinIsNonPositive() {
+        // Arrange
+        int min = 0;
+        int max = 3;
+        String expectedMessage = "max and min should be > 0, but max is " + max + " and min is " + min;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 
     @Test
@@ -28,7 +58,7 @@ class ArrayGeneratorTest {
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
-                ArrayGenerator.generateRandomIntegerArray(100, min, max));
+                ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
 
         // Assert
         Assertions.assertEquals(expectedMessage, exception.getMessage());

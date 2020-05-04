@@ -7,40 +7,28 @@ public class InsertionSort extends Sort {
 
     private int keyIndex, key, sortedElementIndex;
 
-    public void sort(ArrayList<Integer> data) {
-        sort(data, 0, data.size() - 1);
-    }
-
-    public void sort(ArrayList<Integer> data, int left, int right) {
-        for (int i = left + 1; i < right + 1; i++) {
-            int key = data.get(i);
-            int j = i - 1;
-            while (j >= left && data.get(j) > key) {
-                data.set(j + 1, data.get(j));
-                j -= 1;
-            }
-            data.set(j + 1, key);
-        }
-    }
-
     public void moveToNextStep(ArrayList<Integer> data) {
-        if (!running() && data.size() > 1) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        } else if (data.size() <= 1) {
+            setSorted(true);
+        } else if (!running()) {
             setRunning(true);
             keyIndex = 1;
-            initialiseVariablesBeforeSortingData(data);
+            setVariableValuesBeforeSortingData(data);
         } else if (keyLessThanSortedElement(data)) {
             shiftSortedElementToTheRight(data);
         } else {
             data.set(sortedElementIndex + 1, key);
             if (++keyIndex < data.size()) {
-                initialiseVariablesBeforeSortingData(data);
+                setVariableValuesBeforeSortingData(data);
             } else {
                 setSorted(true);
             }
         }
     }
 
-    private void initialiseVariablesBeforeSortingData(ArrayList<Integer> data) {
+    private void setVariableValuesBeforeSortingData(ArrayList<Integer> data) {
         key = data.get(keyIndex);
         sortedElementIndex = keyIndex - 1;
     }
@@ -54,6 +42,30 @@ public class InsertionSort extends Sort {
         sortedElementIndex -= 1;
     }
 
+    public void sort(ArrayList<Integer> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        }
+
+        sort(data, 0, data.size() - 1);
+    }
+
+    public void sort(ArrayList<Integer> data, int left, int right) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        }
+
+        for (int i = left + 1; i < right + 1; i++) {
+            int key = data.get(i);
+            int j = i - 1;
+            while (j >= left && data.get(j) > key) {
+                data.set(j + 1, data.get(j));
+                j -= 1;
+            }
+            data.set(j + 1, key);
+        }
+    }
+
     public static String getName() {
         return NAME;
     }
@@ -64,5 +76,21 @@ public class InsertionSort extends Sort {
 
     public int getKey() {
         return key;
+    }
+
+    public int getSortedElementIndex() {
+        return sortedElementIndex;
+    }
+
+    public void setKeyIndex(int index) {
+        keyIndex = index;
+    }
+
+    public void setKey(int value) {
+        key = value;
+    }
+
+    public void setSortedElementIndex(int index) {
+        sortedElementIndex = index;
     }
 }

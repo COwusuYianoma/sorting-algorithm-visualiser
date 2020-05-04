@@ -31,6 +31,7 @@ class BubbleSortTest {
     public void moveToNextStepSetsSortedToTrueWhenDataContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
+        bubbleSort.setSorted(false);
 
         // Act
         bubbleSort.moveToNextStep(data);
@@ -40,7 +41,7 @@ class BubbleSortTest {
     }
 
     @Test
-    public void moveToNextStepRunsSortAndInitialisesPointerWhenSortNotRunning() {
+    public void moveToNextStepSetsRunningToTrueAndInitialisesPointerWhenSortNotRunning() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7));
         bubbleSort.setRunning(false);
@@ -150,6 +151,7 @@ class BubbleSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(5, 7, 9));
         bubbleSort.setRunning(true);
+        bubbleSort.setSorted(false);
         bubbleSort.setOuterForLoopVariable(data.size() - 1);
         bubbleSort.setInnerForLoopVariable(data.size() - 2);
 

@@ -12,8 +12,130 @@ class InsertionSortTest {
     private final InsertionSort insertionSort = new InsertionSort();
 
     private ArrayList<Integer> data;
-    private ArrayList<Integer> expected;
 
+    // TODO: extract common tests into parent test class if necessary
+    @Test
+    public void moveToNextStepThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.moveToNextStep(data));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void moveToNextStepSetsSortedToTrueWhenDataContainsSingleElement() {
+        // Arrange
+        data = new ArrayList<>(Collections.singletonList(6));
+        insertionSort.setSorted(false);
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(insertionSort.sorted());
+    }
+
+    @Test
+    public void moveToNextStepSetsRunningToTrueAndInitialisesVariablesWhenSortNotRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        insertionSort.setRunning(false);
+        int expectedKeyIndex = 1;
+        int expectedKey = data.get(expectedKeyIndex);
+        int expectedSortedElementIndex = expectedKeyIndex - 1;
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(insertionSort.running());
+        Assertions.assertEquals(expectedKeyIndex, insertionSort.getKeyIndex());
+        Assertions.assertEquals(expectedKey, insertionSort.getKey());
+        Assertions.assertEquals(expectedSortedElementIndex, insertionSort.getSortedElementIndex());
+    }
+
+    @Test
+    public void moveToNextStepShiftsSortedElementToTheRightWhenKeyLessThanSortedElement() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        insertionSort.setRunning(true);
+        insertionSort.setSortedElementIndex(0);
+        int keyIndex = 1;
+        insertionSort.setKeyIndex(keyIndex);
+        insertionSort.setKey(data.get(keyIndex));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(9, 9));
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void moveToNextStepInsertsKeyInCorrectPositionIfKeyNotLessThanElementOnLeft() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 9, 5));
+        insertionSort.setRunning(true);
+        insertionSort.setSortedElementIndex(-1);
+        insertionSort.setKeyIndex(1);
+        insertionSort.setKey(7);
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(7, 9, 5));
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void moveToNextStepSetsVariableValuesWhenIncrementedKeyIndexLessThanDataSize() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 9, 5));
+        insertionSort.setRunning(true);
+        insertionSort.setSortedElementIndex(-1);
+        int keyIndex = 1;
+        insertionSort.setKeyIndex(keyIndex);
+        insertionSort.setKey(7);
+        int expectedKeyIndex = keyIndex + 1;
+        int expectedKey = data.get(expectedKeyIndex);
+        int expectedSortedElementIndex = expectedKeyIndex - 1;
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expectedKeyIndex, insertionSort.getKeyIndex());
+        Assertions.assertEquals(expectedKey, insertionSort.getKey());
+        Assertions.assertEquals(expectedSortedElementIndex, insertionSort.getSortedElementIndex());
+    }
+
+    @Test
+    public void moveToNextStepSetsSortedToTrueWhenIncrementedKeyIndexNotLessThanDataSize() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(7, 7, 9));
+        insertionSort.setRunning(true);
+        insertionSort.setSorted(false);
+        insertionSort.setSortedElementIndex(-1);
+        int keyIndex = 2;
+        insertionSort.setKeyIndex(keyIndex);
+        insertionSort.setKey(5);
+
+        // Act
+        insertionSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(insertionSort.sorted());
+    }
+
+    // TODO: continue adding tests from here
     @Test
     public void sortLeavesDataUnchangedWhenEmpty() {
         // Arrange
@@ -43,7 +165,7 @@ class InsertionSortTest {
     public void sortCorrectlySortsNearlySortedData() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         // Act
         insertionSort.sort(data);
@@ -56,7 +178,7 @@ class InsertionSortTest {
     public void sortCorrectlySortsReversedData() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         // Act
         insertionSort.sort(data);

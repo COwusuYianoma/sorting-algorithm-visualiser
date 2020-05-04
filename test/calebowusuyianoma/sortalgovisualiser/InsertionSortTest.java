@@ -202,7 +202,6 @@ class InsertionSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5));
         int left = data.size() - 1;
-        int right = 3;
         String expectedMessage = "Index left must be < data.size() - 1, but left is " + left +
                 " and (data.size() - 1) equals " + (data.size() - 1);
 

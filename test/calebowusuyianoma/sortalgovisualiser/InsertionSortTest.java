@@ -135,7 +135,117 @@ class InsertionSortTest {
         Assertions.assertTrue(insertionSort.sorted());
     }
 
-    // TODO: continue adding tests from here
+    @Test
+    public void sortThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, 0, 3));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenLeftIndexLessThanZero() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        int left = -1;
+        int right = 3;
+        String expectedMessage = "Indices left and right should be >= 0, but left is " + left +
+                " and right is " + right;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, left, right));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenRightIndexLessThanZero() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        int left = -1;
+        int right = 3;
+        String expectedMessage = "Indices left and right should be >= 0, but left is " + left +
+                " and right is " + right;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, left, right));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenLeftIndexEqualToDataSizeMinusOne() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        int left = data.size() - 1;
+        int right = 3;
+        String expectedMessage = "Index left must be < data.size() - 1, but left is " + left +
+                " and (data.size() - 1) equals " + (data.size() - 1);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, left, 3));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenLeftIndexGreaterThanDataSizeMinusOne() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        int left = data.size();
+        String expectedMessage = "Index left must be < data.size() - 1, but left is " + left +
+                " and (data.size() - 1) equals " + (data.size() - 1);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, left, 3));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortWithIndicesThrowsExceptionWhenRightIndexGreaterThanDataSizeMinusOne() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        int right = 3;
+        String expectedMessage = "Index right must be <= data.size() - 1, but right is " + right +
+                " and (data.size() - 1) equals " + (data.size() - 1);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                insertionSort.sort(data, 0, right));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
     @Test
     public void sortLeavesDataUnchangedWhenEmpty() {
         // Arrange
@@ -143,6 +253,18 @@ class InsertionSortTest {
 
         // Act
         insertionSort.sort(data);
+
+        // Assert
+        Assertions.assertTrue(data.isEmpty());
+    }
+
+    @Test
+    public void sortWithIndicesLeavesDataUnchangedWhenEmpty() {
+        // Arrange
+        data = new ArrayList<>();
+
+        // Act
+        insertionSort.sort(data, 0, 2);
 
         // Assert
         Assertions.assertTrue(data.isEmpty());

@@ -47,6 +47,10 @@ public class InsertionSort extends Sort {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         }
 
+        if ((data.isEmpty()) || (data.size() == 1)) {
+            return;
+        }
+
         sort(data, 0, data.size() - 1);
     }
 
@@ -54,6 +58,12 @@ public class InsertionSort extends Sort {
         if (data == null) {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         }
+
+        if ((data.isEmpty()) || (data.size() == 1)) {
+            return;
+        }
+
+        validateIndices(data, left, right);
 
         for (int i = left + 1; i < right + 1; i++) {
             int key = data.get(i);
@@ -63,6 +73,23 @@ public class InsertionSort extends Sort {
                 j -= 1;
             }
             data.set(j + 1, key);
+        }
+    }
+
+    private void validateIndices(ArrayList<Integer> data, int left, int right) {
+        if ((left < 0) || (right < 0)) {
+            throw new IllegalArgumentException("Indices left and right should be >= 0, but left is " + left +
+                    " and right is " + right);
+        }
+
+        if (left >= data.size() - 1) {
+            throw new IllegalArgumentException("Index left must be < data.size() - 1, but left is " + left +
+                    " and (data.size() - 1) equals " + (data.size() - 1));
+        }
+
+        if (right > data.size() - 1) {
+            throw new IllegalArgumentException("Index right must be <= data.size() - 1, but right is " + right +
+                    " and (data.size() - 1) equals " + (data.size() - 1));
         }
     }
 

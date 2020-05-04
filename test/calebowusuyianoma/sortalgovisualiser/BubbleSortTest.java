@@ -10,13 +10,172 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class BubbleSortTest {
     private final BubbleSort bubbleSort = new BubbleSort();
-    private final TestUtilities testUtilities = new TestUtilities();
 
     private ArrayList<Integer> data;
-    private ArrayList<Integer> expected;
 
     @Test
-    public void sortLeavesDataUnchangedWhenDataIsEmpty() {
+    public void moveToNextStepThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                bubbleSort.moveToNextStep(data));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void moveToNextStepSetsSortedToTrueWhenDataContainsSingleElement() {
+        // Arrange
+        data = new ArrayList<>(Collections.singletonList(6));
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(bubbleSort.sorted());
+    }
+
+    @Test
+    public void moveToNextStepRunsSortAndInitialisesPointerWhenSortNotRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        bubbleSort.setRunning(false);
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(bubbleSort.running());
+        Assertions.assertEquals(data.size() - 1, bubbleSort.getInnerForLoopVariable());
+    }
+
+    @Test
+    public void moveToNextStepSwapsElementsWhenCurrentElementIsLessThanElementOnLeft() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        bubbleSort.setRunning(true);
+        bubbleSort.setInnerForLoopVariable(data.size() - 1);
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(7, 9));
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void moveToNextStepLeavesElementsUnchangedWhenCurrentElementIsGreaterThanElementOnLeft() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(7, 9));
+        bubbleSort.setRunning(true);
+        bubbleSort.setInnerForLoopVariable(data.size() - 1);
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(7, 9));
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void moveToNextStepDecrementsInnerLoopVariableWhenInnerLoopBodyJustFinishesRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        bubbleSort.setRunning(true);
+        int innerLoopVariableInitialValue = data.size() - 1;
+        bubbleSort.setInnerForLoopVariable(innerLoopVariableInitialValue);
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(innerLoopVariableInitialValue - 1, bubbleSort.getInnerForLoopVariable());
+    }
+
+    @Test
+    public void moveToNextStepIncrementsOuterForLoopVariableWhenOuterLoopBodyJustFinishesRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        bubbleSort.setRunning(true);
+        int innerLoopVariableInitialValue = data.size() - 1;
+        bubbleSort.setInnerForLoopVariable(innerLoopVariableInitialValue);
+        int outerLoopVariableInitialValue = 0;
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(outerLoopVariableInitialValue + 1, bubbleSort.getOuterForLoopVariable());
+    }
+
+    @Test
+    public void moveToNextStepLeavesOuterLoopVariableUnchangedWhenOuterLoopBodyStillRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5));
+        bubbleSort.setRunning(true);
+        int innerLoopVariableInitialValue = data.size() - 1;
+        bubbleSort.setInnerForLoopVariable(innerLoopVariableInitialValue);
+        int expected = 0;
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, bubbleSort.getOuterForLoopVariable());
+    }
+
+    @Test
+    public void moveToNextStepReInitialisesInnerLoopVariableWhenInnerLoopTerminatesAndOuterLoopStillRunning() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(5, 9, 7));
+        bubbleSort.setRunning(true);
+        int innerLoopVariableValueOnTermination = 0;
+        bubbleSort.setInnerForLoopVariable(innerLoopVariableValueOnTermination);
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(data.size() - 1, bubbleSort.getInnerForLoopVariable());
+    }
+
+    @Test
+    public void moveToNextStepSetsSortedToTrueWhenBothLoopsTerminate() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(5, 7, 9));
+        bubbleSort.setRunning(true);
+        bubbleSort.setOuterForLoopVariable(data.size() - 1);
+        bubbleSort.setInnerForLoopVariable(data.size() - 2);
+
+        // Act
+        bubbleSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(bubbleSort.sorted());
+    }
+
+    @Test
+    public void sortThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                bubbleSort.sort(data));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void sortLeavesDataUnchangedWhenEmpty() {
         // Arrange
         data = new ArrayList<>();
 
@@ -28,33 +187,7 @@ class BubbleSortTest {
     }
 
     @Test
-    public void sortExecutesCorrectlyWhenDataNearlySorted() {
-        // Arrange
-        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
-
-        // Act
-        bubbleSort.sort(data);
-
-        // Assert
-        Assertions.assertEquals(expected, data);
-    }
-
-    @Test
-    public void sortExecutesCorrectlyWhenDataIsReversed() {
-        // Arrange
-        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
-
-        // Act
-        bubbleSort.sort(data);
-
-        // Assert
-        Assertions.assertEquals(expected, data);
-    }
-
-    @Test
-    public void sortExecutesCorrectlyWhenDataContainsOneElement() {
+    public void sortLeavesDataUnchangedWhenContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
         ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
@@ -67,20 +200,41 @@ class BubbleSortTest {
     }
 
     @Test
-    public void sortExecutesCorrectlyOnRandomData() {
+    public void sortCorrectlySortsNearlySortedData() {
         // Arrange
-        int size = ThreadLocalRandom.current().nextInt(1, 1001);
-        data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
-        System.out.print("Original random array of size " + data.size() + ": ");
-        System.out.println(data.toString());
+        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         // Act
         bubbleSort.sort(data);
-        System.out.println();
-        System.out.print("Array after having been sorted: ");
-        System.out.println(data.toString());
 
         // Assert
-        Assertions.assertTrue(testUtilities.isSorted(data));
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void sortCorrectlySortsReversedData() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
+
+        // Act
+        bubbleSort.sort(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void sortCorrectlySortsRandomData() {
+        // Arrange
+        int size = ThreadLocalRandom.current().nextInt(1, 1001);
+        data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
+
+        // Act
+        bubbleSort.sort(data);
+
+        // Assert
+        Assertions.assertTrue(TestUtilities.isSorted(data));
     }
 }

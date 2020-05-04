@@ -7,26 +7,14 @@ public class BubbleSort extends Sort {
 
     private int outerForLoopVariable, innerForLoopVariable;
 
-    public void sort(ArrayList<Integer> data) {
-        for (int i = 0; i < data.size() - 1; i++) {
-            for (int j = data.size() - 1; j > i; j--) {
-                if (data.get(j) < data.get(j - 1)) {
-                    swap(data, j);
-                }
-            }
-        }
-    }
-
-    private void swap(ArrayList<Integer> data, int key) {
-        int temp = data.get(key);
-        data.set(key, data.get(key - 1));
-        data.set(key - 1, temp);
-    }
-
-    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
-        if (!running() && data.size() > 1) {
+    public void moveToNextStep(ArrayList<Integer> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        } else if (data.size() <= 1) {
+            setSorted(true);
+        } else if (!running()) {
             setRunning(true);
-            initialiseForLoopVariablesBeforeSorting(data);
+            innerForLoopVariable = data.size() - 1;
         } else if (!innerForLoopTerminationExpressionValid()) {
             if (shouldSwap(data)) {
                 swap(data, innerForLoopVariable);
@@ -43,11 +31,6 @@ public class BubbleSort extends Sort {
         }
     }
 
-    private void initialiseForLoopVariablesBeforeSorting(ArrayList<Integer> data) {
-        outerForLoopVariable = 0;
-        innerForLoopVariable = data.size() - 1;
-    }
-
     private boolean innerForLoopTerminationExpressionValid() {
         return innerForLoopVariable <= outerForLoopVariable;
     }
@@ -60,11 +43,47 @@ public class BubbleSort extends Sort {
         return outerForLoopVariable >= data.size() - 1;
     }
 
+    public void sort(ArrayList<Integer> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        }
+
+        for (int i = 0; i < data.size() - 1; i++) {
+            for (int j = data.size() - 1; j > i; j--) {
+                if (data.get(j) < data.get(j - 1)) {
+                    swap(data, j);
+                }
+            }
+        }
+    }
+
+    private void swap(ArrayList<Integer> data, int key) {
+        int temp = data.get(key);
+        data.set(key, data.get(key - 1));
+        data.set(key - 1, temp);
+    }
+
     public static String getName() {
         return NAME;
     }
 
+    public int getOuterForLoopVariable() {
+        return outerForLoopVariable;
+    }
+
+    public int getInnerForLoopVariable() {
+        return innerForLoopVariable;
+    }
+
     public int[] getForLoopVariables() {
         return new int[] {outerForLoopVariable, innerForLoopVariable};
+    }
+
+    public void setOuterForLoopVariable(int value) {
+        outerForLoopVariable = value;
+    }
+
+    public void setInnerForLoopVariable(int value) {
+        innerForLoopVariable = value;
     }
 }

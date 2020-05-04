@@ -10,13 +10,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 class InsertionSortTest {
     private final InsertionSort insertionSort = new InsertionSort();
-    private final TestUtilities testUtilities = new TestUtilities();
 
     private ArrayList<Integer> data;
     private ArrayList<Integer> expected;
 
     @Test
-    public void sortLeavesDataUnchangedWhenDataIsEmpty() {
+    public void sortLeavesDataUnchangedWhenEmpty() {
         // Arrange
         data = new ArrayList<>();
 
@@ -28,33 +27,7 @@ class InsertionSortTest {
     }
 
     @Test
-    public void sortExecutesCorrectlyWhenDataNearlySorted() {
-        // Arrange
-        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
-
-        // Act
-        insertionSort.sort(data);
-
-        // Assert
-        Assertions.assertEquals(expected, data);
-    }
-
-    @Test
-    public void sortExecutesCorrectlyWhenDataIsReversed() {
-        // Arrange
-        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
-
-        // Act
-        insertionSort.sort(data);
-
-        // Assert
-        Assertions.assertEquals(expected, data);
-    }
-
-    @Test
-    public void sortExecutesCorrectlyWhenDataContainsOneElement() {
+    public void sortLeavesDataUnchangedWhenContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
         ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
@@ -67,20 +40,41 @@ class InsertionSortTest {
     }
 
     @Test
-    public void sortExecutesCorrectlyOnRandomData() {
+    public void sortCorrectlySortsNearlySortedData() {
         // Arrange
-        int size = ThreadLocalRandom.current().nextInt(1, 1001);
-        data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
-        System.out.print("Original random array of size " + data.size() + ": ");
-        System.out.println(data.toString());
+        data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
+        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         // Act
         insertionSort.sort(data);
-        System.out.println();
-        System.out.print("Array after having been sorted: ");
-        System.out.println(data.toString());
 
         // Assert
-        Assertions.assertTrue(testUtilities.isSorted(data));
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void sortCorrectlySortsReversedData() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
+        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
+
+        // Act
+        insertionSort.sort(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void sortCorrectlySortsRandomData() {
+        // Arrange
+        int size = ThreadLocalRandom.current().nextInt(1, 1001);
+        data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
+
+        // Act
+        insertionSort.sort(data);
+
+        // Assert
+        Assertions.assertTrue(TestUtilities.isSorted(data));
     }
 }

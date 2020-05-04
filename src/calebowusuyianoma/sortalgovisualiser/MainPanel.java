@@ -217,7 +217,7 @@ public class MainPanel extends JPanel implements ActionListener {
             setRunningTimeLabel();
             sort.setRunning(false);
         } else {
-            sort.moveToNextStepInVisualisation(data);
+            sort.moveToNextStep(data);
         }
 
         repaint();
@@ -257,7 +257,7 @@ public class MainPanel extends JPanel implements ActionListener {
         startTimerBeforeSorting(sortingSpeedSliderValue);
         resetVariablesBeforeSorting();
         resetRunningTime();
-        sort.moveToNextStepInVisualisation(data);
+        sort.moveToNextStep(data);
         repaint();
     }
 

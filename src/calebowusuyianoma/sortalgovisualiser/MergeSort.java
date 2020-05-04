@@ -53,7 +53,7 @@ public class MergeSort extends Sort {
         }
     }
 
-    public void moveToNextStepInVisualisation(ArrayList<Integer> data) {
+    public void moveToNextStep(ArrayList<Integer> data) {
         if (!running() && data.size() > 1) {
             setRunning(true);
             initialiseMapsBeforeSorting(data);

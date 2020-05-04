@@ -4,41 +4,33 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 class ArrayGeneratorTest {
-    private final ArrayGenerator arrayGenerator = new ArrayGenerator();
-
-    private int minimumPossibleValue, maximumPossibleValue;
-
     @Test
     public void generateRandomIntegerArrayReturnsArrayWithExpectedSize() {
-        int size = arrayGenerator.generateRandomIntegerInRange(0, 100);
-        minimumPossibleValue = 5;
-        maximumPossibleValue = 50;
-        ArrayList<Integer> data = arrayGenerator.generateRandomIntegerArray(
-                size, minimumPossibleValue, maximumPossibleValue);
+        // Arrange
+        int size = ThreadLocalRandom.current().nextInt(0, 101);
 
+        // Act
+        ArrayList<Integer> data = ArrayGenerator.generateRandomIntegerArray(size, 5, 50);
+
+        // Assert
         Assertions.assertEquals(size, data.size());
     }
 
     @Test
-    public void generateRandomIntegerInRangeReturnsIntegerInCorrectRange() {
-        minimumPossibleValue = 5;
-        maximumPossibleValue = 50;
-        int randomInt = arrayGenerator.generateRandomIntegerInRange(minimumPossibleValue, maximumPossibleValue);
+    public void generateRandomIntegerArrayThrowsExceptionWhenMaxLessThanOrEqualToMin() {
+        // Arrange
+        int min = 50;
+        int max = 5;
+        String expectedMessage = "max should be > min, but max is " + max + " and min is " + min;
 
-        Assertions.assertTrue(randomInt >= minimumPossibleValue && randomInt < maximumPossibleValue);
-    }
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                ArrayGenerator.generateRandomIntegerArray(100, min, max));
 
-    @Test
-    public void generateRandomIntegerInRangeThrowsIfMaxLessThanMin() {
-        minimumPossibleValue = 50;
-        maximumPossibleValue = 5;
-        Exception exception = Assertions.assertThrows(IllegalArgumentException.class,
-                () -> arrayGenerator.generateRandomIntegerInRange(minimumPossibleValue, maximumPossibleValue));
-
-        String expectedMessage = "max should be >= min, but max is " +
-                maximumPossibleValue + " and min is " + minimumPossibleValue;
+        // Assert
         Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 }

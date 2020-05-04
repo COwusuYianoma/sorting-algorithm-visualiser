@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.ThreadLocalRandom;
 
 class TimSortTest {
     private final TimSort timSort = new TimSort();
@@ -16,56 +17,70 @@ class TimSortTest {
 
     @Test
     public void sortLeavesDataUnchangedWhenDataIsEmpty() {
+        // Arrange
         data = new ArrayList<>();
+
+        // Act
         timSort.sort(data);
 
+        // Assert
         Assertions.assertTrue(data.isEmpty());
     }
 
     @Test
     public void sortExecutesCorrectlyWhenDataNearlySorted() {
+        // Arrange
         data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        timSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
+        // Act
+        timSort.sort(data);
+
+        // Assert
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyWhenDataIsReversed() {
+        // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3, 1));
-        timSort.sort(data);
         expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
+        // Act
+        timSort.sort(data);
+
+        // Assert
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyWhenDataContainsOneElement() {
+        // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
-        timSort.sort(data);
         ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
+        // Act
+        timSort.sort(data);
+
+        // Assert
         Assertions.assertEquals(expected, data);
     }
 
     @Test
     public void sortExecutesCorrectlyOnRandomData() {
-        ArrayGenerator arrayGenerator = new ArrayGenerator();
-        int size = arrayGenerator.generateRandomIntegerInRange(1, 1000);
-        int minimumPossibleValue = 1;
-        int maximumPossibleValue = 2000;
-        data = arrayGenerator.generateRandomIntegerArray(size, minimumPossibleValue, maximumPossibleValue);
-
+        // Arrange
+        int size = ThreadLocalRandom.current().nextInt(1, 1001);
+        data = ArrayGenerator.generateRandomIntegerArray(size, 1, 2001);
         System.out.print("Original random array of size " + data.size() + ": ");
         System.out.println(data.toString());
 
+        // Act
         timSort.sort(data);
-
         System.out.println();
         System.out.print("Array after having been sorted: ");
         System.out.println(data.toString());
 
+        // Assert
         Assertions.assertTrue(testUtilities.isSorted(data));
     }
 }

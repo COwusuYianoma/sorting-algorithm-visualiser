@@ -22,8 +22,11 @@ class MergeSortTest {
     private ArrayList<Integer> data;
     private ArrayList<Integer> expected; // TODO: get rid of this if necessary
 
-    @Mock
-    private Map<String, Integer> currentPointerMapMock;
+    @Mock private Map<String, Integer> currentPointerMap;
+    @Mock private Map<Integer, Integer> parentNodes;
+    @Mock private Map<Integer, Integer> numberOfSortedChildrenMap;
+    @Mock private Map<Integer, Boolean> sortedTreeNodes;
+    @Mock private Map<Integer, Map<String, Integer>> treeNodePointerMaps;
 
     // TODO: Extract common (and ugly) code into private functions
 
@@ -73,98 +76,147 @@ class MergeSortTest {
     @Test
     public void moveToNextStepCalculatesMiddleIndexIfNotCalculatedAndCurrentSubArrayContainsMultipleUnsortedElements() {
         // Arrange
-
-        // TODO: delete this old code; the new code is working
-        // Old code
-//        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
-//        mergeSort.setRunning(true);
-//
-//        Map<String, Integer> pointerMap = new HashMap<>();
-//        pointerMap.put(MergeSort.getLow(), 0);
-//        pointerMap.put(MergeSort.getMiddle(), Integer.MIN_VALUE);
-//        pointerMap.put(MergeSort.getHigh(), data.size() - 1);
-//        mergeSort.setCurrentPointerMap(pointerMap);
-//
-//        mergeSort.setShouldCalculateMiddleIndex(true);
-
-        // New code
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
-
-        when(currentPointerMapMock.get(MergeSort.getLow())).thenReturn(0);
-        when(currentPointerMapMock.get(MergeSort.getHigh())).thenReturn(data.size() - 1);
-        mergeSort.setCurrentPointerMap(currentPointerMapMock);
-
         mergeSort.setShouldCalculateMiddleIndex(true);
+
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(data.size() - 1);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
 
         // Act
         mergeSort.moveToNextStep(data);
 
         // Assert
-        verify(currentPointerMapMock).put(eq(MergeSort.getMiddle()), anyInt());
+        verify(currentPointerMap).put(eq(MergeSort.getMiddle()), anyInt());
         Assertions.assertFalse(mergeSort.getShouldCalculateMiddleIndex());
     }
 
-    // TODO: use mocking here if necessary/helpful
     @Test
     public void moveToNextStepMovesToLeftChildIfMiddleIndexCalculatedAndCurrentSubArrayContainsMultipleUnsortedElements() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
-
-        Map<String, Integer> pointerMap = new HashMap<>(); // TODO: consider making this a private field at the top of this class
-        pointerMap.put(MergeSort.getLow(), 0);
-        pointerMap.put(MergeSort.getMiddle(), 1);
-        pointerMap.put(MergeSort.getHigh(), data.size() - 1);
-        mergeSort.setCurrentPointerMap(pointerMap);
-
         mergeSort.setShouldCalculateMiddleIndex(false);
+
+        int middleIndex = 1;
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
+        when(currentPointerMap.get(MergeSort.getMiddle())).thenReturn(middleIndex);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(data.size() - 1);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
 
         // Act
         mergeSort.moveToNextStep(data);
 
         // Assert
-        int currentTreeNode = mergeSort.getCurrentTreeNode();
-        Map<String, Integer> currentPointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
-        Assertions.assertEquals(pointerMap.get(MergeSort.getMiddle()), currentPointerMap.get(MergeSort.getHigh()));
+        //int currentTreeNode = mergeSort.getCurrentTreeNode();
+        //Map<String, Integer> currentPointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
+        Map<String, Integer> currentPointerMap = mergeSort.getCurrentPointerMap();
+        Assertions.assertEquals(middleIndex, currentPointerMap.get(MergeSort.getHigh()));
     }
 
-    // TODO: use mocking here if necessary/helpful
     @Test
     public void moveToNextStepMovesToRightChildWhenOnlyLeftChildSorted() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
+        int initialTreeNode = 0;
+        mergeSort.setCurrentTreeNode(initialTreeNode);
 
-        // TODO: complete the Arrange section
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(0);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
 
-        // Old code
-//        Map<String, Integer> pointerMap = new HashMap<>(); // TODO: consider making this a private field at the top of this class
-//        pointerMap.put(MergeSort.getLow(), 0);
-//        pointerMap.put(MergeSort.getMiddle(), Integer.MIN_VALUE);
-//        pointerMap.put(MergeSort.getHigh(), 0);
-//        mergeSort.setCurrentPointerMap(pointerMap);
-//
-//        int currentTreeNode = 0;
-//        mergeSort.setCurrentTreeNode(currentTreeNode);
-//
-//        Map<Integer, Integer> parentNodes = mergeSort.getParentNodes();
-//        int low = 0;
-//        int high = 1;
-//        int parentNode = ((Math.max(low, high) * (Math.max(low, high) + 1)) / 2) + Math.min(low, high);
-//        parentNodes.put(currentTreeNode, parentNode);
-//        mergeSort.setParentNodes(parentNodes);
-//
-//        Map<Integer, Integer> numberOfSortedChildrenMap
+        int parentNode = 1;
+        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
+        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(0);
+        mergeSort.setParentNodes(parentNodes);
+        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
 
-        // Using mocking
-
+        int middleIndex = 0;
+        Map<String, Integer> parentPointerMap = new HashMap<>();
+        parentPointerMap.put(MergeSort.getLow(), 0);
+        parentPointerMap.put(MergeSort.getMiddle(), middleIndex);
+        parentPointerMap.put(MergeSort.getHigh(), 1);
+        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
+        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
 
         // Act
         mergeSort.moveToNextStep(data);
 
         // Assert
+        Map<String, Integer> currentPointerMap = mergeSort.getCurrentPointerMap();
+        Assertions.assertEquals(middleIndex + 1, currentPointerMap.get(MergeSort.getLow()));
+    }
 
+    @Test
+    public void moveToNextStepMergesWhenBothChildrenOfCurrentNodeAreSorted() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
+        mergeSort.setRunning(true);
+        int initialTreeNode = 2;
+        mergeSort.setCurrentTreeNode(initialTreeNode);
+
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(1);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(1);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
+
+        int parentNode = 1;
+        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
+        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(1);
+        mergeSort.setParentNodes(parentNodes);
+        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+
+        Map<String, Integer> parentPointerMap = new HashMap<>();
+        parentPointerMap.put(MergeSort.getLow(), 0);
+        parentPointerMap.put(MergeSort.getMiddle(), 0);
+        parentPointerMap.put(MergeSort.getHigh(), 1);
+        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
+        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
+
+        expected = new ArrayList<>(Arrays.asList(7, 9, 5, 3));
+
+        // Act
+        mergeSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void moveToNextStepSetsSortedToTrueWhenChildrenOfRootNodeAreMerged() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(7, 9, 3, 5));
+        mergeSort.setRunning(true);
+        mergeSort.setSorted(false);
+        int initialTreeNode = 8;
+        mergeSort.setCurrentTreeNode(initialTreeNode);
+
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(2);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(3);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
+
+        when(sortedTreeNodes.containsKey(initialTreeNode)).thenReturn(true);
+        mergeSort.setSortedTreeNodes(sortedTreeNodes);
+
+        int parentNode = 6;
+        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
+        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(1);
+        mergeSort.setParentNodes(parentNodes);
+        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+
+        Map<String, Integer> parentPointerMap = new HashMap<>();
+        parentPointerMap.put(MergeSort.getLow(), 0);
+        parentPointerMap.put(MergeSort.getMiddle(), 1);
+        parentPointerMap.put(MergeSort.getHigh(), data.size() - 1);
+        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
+        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
+
+        // Act
+        mergeSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(mergeSort.isSorted());
     }
 
     @Test

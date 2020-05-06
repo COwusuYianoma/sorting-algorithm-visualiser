@@ -10,15 +10,13 @@ public class MergeSort extends Sort {
     private static final String MIDDLE = "middle";
     private static final String HIGH = "high";
 
-    private final Map<Integer, Boolean> sortedTreeNodes = new HashMap<>();
-    private final Map<Integer, Integer> numberOfSortedChildrenMap = new HashMap<>();
-    private final Map<Integer, Map<String, Integer>> treeNodePointerMaps = new HashMap<>();
-
     private boolean shouldCalculateMiddleIndex;
     private int currentTreeNode;
     private Map<Integer, Integer> parentNodes = new HashMap<>();
     private Map<String, Integer> currentPointerMap = new HashMap<>();
-
+    private Map<Integer, Integer> numberOfSortedChildrenMap = new HashMap<>();
+    private Map<Integer, Boolean> sortedTreeNodes = new HashMap<>();
+    private Map<Integer, Map<String, Integer>> treeNodePointerMaps = new HashMap<>();
 
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
@@ -30,16 +28,15 @@ public class MergeSort extends Sort {
             initialiseMapsBeforeSorting(data);
             currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
             shouldCalculateMiddleIndex = true;
-        } else if (unsortedSubArrayContainingMultipleElements(currentPointerMap, currentTreeNode)) {
+        } else if (currentNodeCorrespondsToUnsortedSubArrayContainingMultipleElements()) {
             if (shouldCalculateMiddleIndex) {
                 currentPointerMap.put(MIDDLE, calculateMiddleIndex(currentPointerMap));
                 shouldCalculateMiddleIndex = false;
             } else {
                 int previousTreeNode = currentTreeNode;
-                moveToLeftChild(currentPointerMap);
+                moveToLeftChild();
                 setParentAndChildrenData(previousTreeNode);
                 shouldCalculateMiddleIndex = true;
-                currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
             }
         } else {
             sortedTreeNodes.put(currentTreeNode, true);
@@ -50,8 +47,7 @@ public class MergeSort extends Sort {
 
             if (onlyLeftChildSorted(sortedChildren)) {
                 int previousTreeNode = currentTreeNode;
-                moveToRightChild(currentPointerMap);
-                currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
+                moveToRightChild();
                 setParentAndChildrenData(previousTreeNode);
             } else {
                 merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
@@ -75,11 +71,9 @@ public class MergeSort extends Sort {
         numberOfSortedChildrenMap.put(currentTreeNode, 0);
     }
 
-    private boolean unsortedSubArrayContainingMultipleElements(Map<String, Integer> currentPointerMap,
-                                                               int currentTreeNode) {
-
+    private boolean currentNodeCorrespondsToUnsortedSubArrayContainingMultipleElements() {
         return (currentPointerMap.get(LOW) < currentPointerMap.get(HIGH)) &&
-                !sortedTreeNodes.containsKey(currentTreeNode);
+                (!sortedTreeNodes.containsKey(currentTreeNode));
     }
 
     private int calculateMiddleIndex(Map<String, Integer> currentPointerMap) {
@@ -90,7 +84,7 @@ public class MergeSort extends Sort {
         return ((Math.max(low, high) * (Math.max(low, high) + 1)) / 2) + Math.min(low, high);
     }
 
-    private void moveToLeftChild(Map<String, Integer> currentPointerMap) {
+    private void moveToLeftChild() {
         int currentLow = currentPointerMap.get(LOW);
         int newHigh = currentPointerMap.get(MIDDLE);
         currentTreeNode = calculateUniqueNodeId(currentLow, newHigh);
@@ -100,6 +94,7 @@ public class MergeSort extends Sort {
         pointerMap.put(MIDDLE, Integer.MIN_VALUE);
         pointerMap.put(HIGH, newHigh);
         treeNodePointerMaps.put(currentTreeNode, pointerMap);
+        currentPointerMap = pointerMap;
     }
 
     private void setParentAndChildrenData(int previousTreeNode) {
@@ -111,7 +106,7 @@ public class MergeSort extends Sort {
         return sortedChildren == 1;
     }
 
-    private void moveToRightChild(Map<String, Integer> currentPointerMap) {
+    private void moveToRightChild() {
         int currentMiddle = currentPointerMap.get(MIDDLE);
         int currentHigh = currentPointerMap.get(HIGH);
         int newLow = currentMiddle + 1;
@@ -122,6 +117,7 @@ public class MergeSort extends Sort {
         pointerMap.put(MIDDLE, Integer.MIN_VALUE);
         pointerMap.put(HIGH, currentHigh);
         treeNodePointerMaps.put(currentTreeNode, pointerMap);
+        currentPointerMap = pointerMap;
     }
 
     private boolean currentTreeNodeIsRoot(ArrayList<Integer> data) {
@@ -220,6 +216,10 @@ public class MergeSort extends Sort {
         return currentTreeNode;
     }
 
+    public Map<String, Integer> getCurrentPointerMap() {
+        return currentPointerMap;
+    }
+
     public Map<Integer, Map<String, Integer>> getTreeNodePointerMaps() {
         return treeNodePointerMaps;
     }
@@ -245,11 +245,38 @@ public class MergeSort extends Sort {
     }
 
     public void setCurrentPointerMap(Map<String, Integer> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
         currentPointerMap = map;
     }
 
     public void setParentNodes(Map<Integer, Integer> parentNodes) {
+        if (parentNodes == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
         this.parentNodes = parentNodes;
+    }
+
+    public void setSortedTreeNodes(Map<Integer, Boolean> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        sortedTreeNodes = map;
+    }
+
+    public void setNumberOfSortedChildrenMap(Map<Integer, Integer> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        numberOfSortedChildrenMap = map;
+    }
+
+    public void setTreeNodePointerMaps(Map<Integer, Map<String, Integer>> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        treeNodePointerMaps = map;
     }
 
     public void setShouldCalculateMiddleIndex(boolean value) {

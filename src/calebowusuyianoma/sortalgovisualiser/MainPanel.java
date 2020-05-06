@@ -210,7 +210,7 @@ public class MainPanel extends JPanel implements ActionListener {
             JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
 
             return;
-        } else if (sort.sorted()) {
+        } else if (sort.isSorted()) {
             timer.stop();
             updateFinalRunningTime();
             resetVariablesAfterSorting();
@@ -354,9 +354,9 @@ public class MainPanel extends JPanel implements ActionListener {
 
         int[] forLoopVariables = bubbleSort.getForLoopVariables();
         for (int i = 0; i < data.size(); i++) {
-            if (bubbleSort.sorted()) {
+            if (bubbleSort.isSorted()) {
                 g.setColor(Color.MAGENTA);
-            } else if (bubbleSort.running() && contains(forLoopVariables, i)) {
+            } else if (bubbleSort.isRunning() && contains(forLoopVariables, i)) {
                 g.setColor(Color.CYAN);
             } else {
                 g.setColor(Color.BLACK);
@@ -406,7 +406,7 @@ public class MainPanel extends JPanel implements ActionListener {
         Map<String, Integer> currentTreeNodePointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
         Map<Integer, Boolean> sortedTreeNodes = mergeSort.getSortedTreeNodes();
         for (int i = 0; i < data.size(); i++) {
-            if (mergeSort.sorted()) {
+            if (mergeSort.isSorted()) {
                 g.setColor(Color.MAGENTA);
             } else if (sortedTreeNodes.containsKey(currentTreeNode)) {
                 if (currentElementIsInSubArrayThatWasJustSorted(currentTreeNodePointerMap, i)) {
@@ -462,7 +462,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int mergeEndIndex = timSort.getMergeEndIndex();
         boolean runningInsertionSort = timSort.runningInsertionSort();
         for (int i = 0; i < data.size(); i++) {
-            if (timSort.sorted()) {
+            if (timSort.isSorted()) {
                 g.setColor(Color.MAGENTA);
             } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i, left, keyIndex)) {
                 g.setColor(Color.ORANGE);

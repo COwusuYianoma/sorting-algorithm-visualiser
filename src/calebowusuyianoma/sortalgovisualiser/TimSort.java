@@ -32,7 +32,7 @@ public class TimSort extends Sort {
     }
 
     public void moveToNextStep(ArrayList<Integer> data) {
-        if (!running() && data.size() > 1) {
+        if (!isRunning() && data.size() > 1) {
             setRunning(true);
             numberOfElements = data.size();
             runSize = minimumRun;

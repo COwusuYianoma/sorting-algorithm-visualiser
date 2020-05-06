@@ -12,7 +12,7 @@ public class InsertionSort extends Sort {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         } else if (data.size() <= 1) {
             setSorted(true);
-        } else if (!running()) {
+        } else if (!isRunning()) {
             setRunning(true);
             keyIndex = 1;
             setVariableValuesBeforeSortingData(data);

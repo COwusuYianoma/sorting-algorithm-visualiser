@@ -37,7 +37,7 @@ class BubbleSortTest {
         bubbleSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(bubbleSort.sorted());
+        Assertions.assertTrue(bubbleSort.isSorted());
     }
 
     @Test
@@ -50,7 +50,7 @@ class BubbleSortTest {
         bubbleSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(bubbleSort.running());
+        Assertions.assertTrue(bubbleSort.isRunning());
         Assertions.assertEquals(data.size() - 1, bubbleSort.getInnerForLoopVariable());
     }
 
@@ -159,7 +159,7 @@ class BubbleSortTest {
         bubbleSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(bubbleSort.sorted());
+        Assertions.assertTrue(bubbleSort.isSorted());
     }
 
     @Test
@@ -237,6 +237,6 @@ class BubbleSortTest {
         bubbleSort.sort(data);
 
         // Assert
-        Assertions.assertTrue(TestUtilities.isSorted(data));
+        Assertions.assertTrue(bubbleSort.isSorted(data));
     }
 }

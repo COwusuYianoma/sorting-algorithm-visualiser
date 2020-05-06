@@ -75,6 +75,6 @@ class TimSortTest {
         timSort.sort(data);
 
         // Assert
-        Assertions.assertTrue(TestUtilities.isSorted(data));
+        Assertions.assertTrue(timSort.isSorted(data));
     }
 }

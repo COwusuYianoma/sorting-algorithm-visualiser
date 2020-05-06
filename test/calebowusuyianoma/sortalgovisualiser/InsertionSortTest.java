@@ -38,7 +38,7 @@ class InsertionSortTest {
         insertionSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(insertionSort.sorted());
+        Assertions.assertTrue(insertionSort.isSorted());
     }
 
     @Test
@@ -54,7 +54,7 @@ class InsertionSortTest {
         insertionSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(insertionSort.running());
+        Assertions.assertTrue(insertionSort.isRunning());
         Assertions.assertEquals(expectedKeyIndex, insertionSort.getKeyIndex());
         Assertions.assertEquals(expectedKey, insertionSort.getKey());
         Assertions.assertEquals(expectedSortedElementIndex, insertionSort.getSortedElementIndex());
@@ -132,7 +132,7 @@ class InsertionSortTest {
         insertionSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertTrue(insertionSort.sorted());
+        Assertions.assertTrue(insertionSort.isSorted());
     }
 
     @Test
@@ -318,6 +318,6 @@ class InsertionSortTest {
         insertionSort.sort(data);
 
         // Assert
-        Assertions.assertTrue(TestUtilities.isSorted(data));
+        Assertions.assertTrue(insertionSort.isSorted(data));
     }
 }

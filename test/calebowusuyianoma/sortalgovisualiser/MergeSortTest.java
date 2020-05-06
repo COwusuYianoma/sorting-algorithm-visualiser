@@ -45,6 +45,19 @@ class MergeSortTest {
     }
 
     @Test
+    public void moveToNextStepSetsSortedToTrueWhenDataIsEmpty() {
+        // Arrange
+        data = new ArrayList<>();
+        mergeSort.setSorted(false);
+
+        // Act
+        mergeSort.moveToNextStep(data);
+
+        // Assert
+        Assertions.assertTrue(mergeSort.isSorted());
+    }
+
+    @Test
     public void moveToNextStepSetsSortedToTrueWhenDataContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
@@ -93,7 +106,7 @@ class MergeSortTest {
     }
 
     @Test
-    public void moveToNextStepMovesToLeftChildIfMiddleIndexCalculatedAndCurrentSubArrayContainsMultipleUnsortedElements() {
+    public void moveToNextStepMovesToLeftChildIfMiddleCalculatedAndCurrentSubArrayContainsMultipleUnsortedElements() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
@@ -109,8 +122,6 @@ class MergeSortTest {
         mergeSort.moveToNextStep(data);
 
         // Assert
-        //int currentTreeNode = mergeSort.getCurrentTreeNode();
-        //Map<String, Integer> currentPointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
         Map<String, Integer> currentPointerMap = mergeSort.getCurrentPointerMap();
         Assertions.assertEquals(middleIndex, currentPointerMap.get(MergeSort.getHigh()));
     }
@@ -220,6 +231,20 @@ class MergeSortTest {
     }
 
     @Test
+    public void sortThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.sort(data));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
     public void sortLeavesDataUnchangedWhenEmpty() {
         // Arrange
         data = new ArrayList<>();
@@ -281,5 +306,59 @@ class MergeSortTest {
 
         // Assert
         Assertions.assertTrue(mergeSort.isSorted(data));
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expectedMessage = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, 0, 1, 2));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
+    }
+
+    @Test
+    public void mergeLeavesDataUnchangedWhenIsEmpty() {
+        // Arrange
+        data = new ArrayList<>();
+
+        // Act
+        mergeSort.merge(data, 0, 1, 2);
+
+        // Assert
+        Assertions.assertTrue(data.isEmpty());
+    }
+
+    @Test
+    public void mergeLeavesDataUnchangedWhenContainsSingleElement() {
+        // Arrange
+        data = new ArrayList<>(Collections.singletonList(6));
+        expected = new ArrayList<>(Collections.singletonList(6));
+
+        // Act
+        mergeSort.merge(data, 0, 1, 2);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenLowIndexLessThanZero() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        int lowIndex = -1;
+        String expectedMessage = "lowIndex must be >= 0 but is " + lowIndex;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, lowIndex, 1, 2));
+
+        // Assert
+        Assertions.assertEquals(expectedMessage, exception.getMessage());
     }
 }

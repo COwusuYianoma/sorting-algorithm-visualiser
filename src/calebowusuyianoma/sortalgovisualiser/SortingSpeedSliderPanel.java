@@ -4,13 +4,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-// TODO: remove these if you choose to use
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Component;
 
-public class SortingSpeedSliderPanel extends JPanel {
-    private JSlider slider;
+public class SortingSpeedSliderPanel extends JPanel implements ChangeListener {
+    private final JSlider slider;
     private SliderPanelListener sliderPanelListener;
 
     public SortingSpeedSliderPanel(JSlider slider) {
@@ -21,7 +20,8 @@ public class SortingSpeedSliderPanel extends JPanel {
         setUpSlider();
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        add(new JLabel("Sorting speed"));
+        //add(new JLabel("Sorting speed"));
+        add(sliderLabel);
         add(slider);
     }
 
@@ -32,22 +32,17 @@ public class SortingSpeedSliderPanel extends JPanel {
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setVisible(true);
-        slider.addChangeListener(e -> {
-            if (sliderPanelListener != null) {
-                sliderPanelListener.sliderPanelEventOccurred(e);
-            }
-        });
-        //slider.addChangeListener(this); // Another way of adding a listener, using the overridden method below
+        slider.addChangeListener(this);
     }
 
-//    @Override
-//    public void stateChanged(ChangeEvent e) {
-//        if (sliderPanelListener != null) {
-//            sliderPanelListener.sliderPanelEventOccurred(e);
-//        }
-//    }
+    // TODO: test this method
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (sliderPanelListener != null) {
+            sliderPanelListener.sliderPanelEventOccurred(e);
+        }
+    }
 
-    // TODO: consider adding a null check here
     public void setSliderPanelListener(SliderPanelListener sliderPanelListener) {
         this.sliderPanelListener = sliderPanelListener;
     }

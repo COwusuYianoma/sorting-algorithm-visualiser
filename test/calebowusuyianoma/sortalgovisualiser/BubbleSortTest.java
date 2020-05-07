@@ -17,14 +17,14 @@ class BubbleSortTest {
     public void moveToNextStepThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expectedMessage = "The data should contain at least one element, but it is null";
+        String expected = "The data should contain at least one element, but it is null";
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 bubbleSort.moveToNextStep(data));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
     }
 
     @Test
@@ -104,15 +104,13 @@ class BubbleSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7));
         bubbleSort.setRunning(true);
-        int innerLoopVariableInitialValue = data.size() - 1;
-        bubbleSort.setInnerForLoopVariable(innerLoopVariableInitialValue);
-        int outerLoopVariableInitialValue = 0;
+        bubbleSort.setInnerForLoopVariable(data.size() - 1);
 
         // Act
         bubbleSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertEquals(outerLoopVariableInitialValue + 1, bubbleSort.getOuterForLoopVariable());
+        Assertions.assertEquals(1, bubbleSort.getOuterForLoopVariable());
     }
 
     @Test
@@ -120,15 +118,13 @@ class BubbleSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5));
         bubbleSort.setRunning(true);
-        int innerLoopVariableInitialValue = data.size() - 1;
-        bubbleSort.setInnerForLoopVariable(innerLoopVariableInitialValue);
-        int expected = 0;
+        bubbleSort.setInnerForLoopVariable(data.size() - 1);
 
         // Act
         bubbleSort.moveToNextStep(data);
 
         // Assert
-        Assertions.assertEquals(expected, bubbleSort.getOuterForLoopVariable());
+        Assertions.assertEquals(0, bubbleSort.getOuterForLoopVariable());
     }
 
     @Test
@@ -136,8 +132,7 @@ class BubbleSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(5, 9, 7));
         bubbleSort.setRunning(true);
-        int innerLoopVariableValueOnTermination = 0;
-        bubbleSort.setInnerForLoopVariable(innerLoopVariableValueOnTermination);
+        bubbleSort.setInnerForLoopVariable(0);
 
         // Act
         bubbleSort.moveToNextStep(data);
@@ -166,14 +161,14 @@ class BubbleSortTest {
     public void sortThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expectedMessage = "The data should contain at least one element, but it is null";
+        String expected = "The data should contain at least one element, but it is null";
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 bubbleSort.sort(data));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
     }
 
     @Test

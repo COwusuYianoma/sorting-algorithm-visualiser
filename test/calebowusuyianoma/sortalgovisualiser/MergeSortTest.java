@@ -20,7 +20,6 @@ class MergeSortTest {
     private final MergeSort mergeSort = new MergeSort();
 
     private ArrayList<Integer> data;
-    private ArrayList<Integer> expected; // TODO: get rid of this if necessary
 
     @Mock private Map<String, Integer> currentPointerMap;
     @Mock private Map<Integer, Integer> parentNodes;
@@ -28,20 +27,18 @@ class MergeSortTest {
     @Mock private Map<Integer, Boolean> sortedTreeNodes;
     @Mock private Map<Integer, Map<String, Integer>> treeNodePointerMaps;
 
-    // TODO: Extract common (and ugly) code into private functions
-
     @Test
     public void moveToNextStepThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expectedMessage = "The data should contain at least one element, but it is null";
+        String expected = "The data should contain at least one element, but it is null";
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 mergeSort.moveToNextStep(data));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
     }
 
     @Test
@@ -93,9 +90,7 @@ class MergeSortTest {
         mergeSort.setRunning(true);
         mergeSort.setShouldCalculateMiddleIndex(true);
 
-        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
-        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(data.size() - 1);
-        mergeSort.setCurrentPointerMap(currentPointerMap);
+        setCurrentPointerMap(0, data.size() - 1);
 
         // Act
         mergeSort.moveToNextStep(data);
@@ -113,10 +108,8 @@ class MergeSortTest {
         mergeSort.setShouldCalculateMiddleIndex(false);
 
         int middleIndex = 1;
-        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
         when(currentPointerMap.get(MergeSort.getMiddle())).thenReturn(middleIndex);
-        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(data.size() - 1);
-        mergeSort.setCurrentPointerMap(currentPointerMap);
+        setCurrentPointerMap(0, data.size() - 1);
 
         // Act
         mergeSort.moveToNextStep(data);
@@ -131,26 +124,18 @@ class MergeSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
+
         int initialTreeNode = 0;
         mergeSort.setCurrentTreeNode(initialTreeNode);
 
-        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(0);
-        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(0);
-        mergeSort.setCurrentPointerMap(currentPointerMap);
+        setCurrentPointerMap(0, 0);
 
         int parentNode = 1;
-        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
-        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(0);
-        mergeSort.setParentNodes(parentNodes);
-        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+        setParentNodes(initialTreeNode, parentNode);
+        setNumberOfSortedChildrenMap(parentNode, 0);
 
         int middleIndex = 0;
-        Map<String, Integer> parentPointerMap = new HashMap<>();
-        parentPointerMap.put(MergeSort.getLow(), 0);
-        parentPointerMap.put(MergeSort.getMiddle(), middleIndex);
-        parentPointerMap.put(MergeSort.getHigh(), 1);
-        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
-        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
+        setTreeNodePointerMaps(parentNode, middleIndex, 1);
 
         // Act
         mergeSort.moveToNextStep(data);
@@ -165,27 +150,19 @@ class MergeSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7, 5, 3));
         mergeSort.setRunning(true);
+
         int initialTreeNode = 2;
         mergeSort.setCurrentTreeNode(initialTreeNode);
 
-        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(1);
-        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(1);
-        mergeSort.setCurrentPointerMap(currentPointerMap);
+        setCurrentPointerMap(1, 1);
 
         int parentNode = 1;
-        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
-        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(1);
-        mergeSort.setParentNodes(parentNodes);
-        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+        setParentNodes(initialTreeNode, parentNode);
+        setNumberOfSortedChildrenMap(parentNode, 1);
 
-        Map<String, Integer> parentPointerMap = new HashMap<>();
-        parentPointerMap.put(MergeSort.getLow(), 0);
-        parentPointerMap.put(MergeSort.getMiddle(), 0);
-        parentPointerMap.put(MergeSort.getHigh(), 1);
-        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
-        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
+        setTreeNodePointerMaps(parentNode, 0, 1);
 
-        expected = new ArrayList<>(Arrays.asList(7, 9, 5, 3));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(7, 9, 5, 3));
 
         // Act
         mergeSort.moveToNextStep(data);
@@ -200,28 +177,20 @@ class MergeSortTest {
         data = new ArrayList<>(Arrays.asList(7, 9, 3, 5));
         mergeSort.setRunning(true);
         mergeSort.setSorted(false);
+
         int initialTreeNode = 8;
         mergeSort.setCurrentTreeNode(initialTreeNode);
 
-        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(2);
-        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(3);
-        mergeSort.setCurrentPointerMap(currentPointerMap);
+        setCurrentPointerMap(2, 3);
 
         when(sortedTreeNodes.containsKey(initialTreeNode)).thenReturn(true);
         mergeSort.setSortedTreeNodes(sortedTreeNodes);
 
         int parentNode = 6;
-        when(parentNodes.get(initialTreeNode)).thenReturn(parentNode);
-        when(numberOfSortedChildrenMap.get(parentNode)).thenReturn(1);
-        mergeSort.setParentNodes(parentNodes);
-        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+        setParentNodes(initialTreeNode, parentNode);
+        setNumberOfSortedChildrenMap(parentNode, 1);
 
-        Map<String, Integer> parentPointerMap = new HashMap<>();
-        parentPointerMap.put(MergeSort.getLow(), 0);
-        parentPointerMap.put(MergeSort.getMiddle(), 1);
-        parentPointerMap.put(MergeSort.getHigh(), data.size() - 1);
-        when(treeNodePointerMaps.get(parentNode)).thenReturn(parentPointerMap);
-        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
+        setTreeNodePointerMaps(parentNode, 1, data.size() - 1);
 
         // Act
         mergeSort.moveToNextStep(data);
@@ -234,14 +203,14 @@ class MergeSortTest {
     public void sortThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expectedMessage = "The data should contain at least one element, but it is null";
+        String expected = "The data should contain at least one element, but it is null";
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 mergeSort.sort(data));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
     }
 
     @Test
@@ -260,7 +229,7 @@ class MergeSortTest {
     public void sortLeavesDataUnchangedWhenContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
-        expected = new ArrayList<>(Collections.singletonList(6));
+        ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
         // Act
         mergeSort.sort(data);
@@ -273,7 +242,7 @@ class MergeSortTest {
     public void sortCorrectlySortsNearlySortedData() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(1, 5, 3, 7, 9));
-        expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 3, 5, 7, 9));
 
         // Act
         mergeSort.sort(data);
@@ -286,7 +255,7 @@ class MergeSortTest {
     public void sortCorrectlySortsReversedData() {
         // Arrange
         data = new ArrayList<>(Arrays.asList(6, 5, 4, 3, 2, 1));
-        expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6));
 
         // Act
         mergeSort.sort(data);
@@ -312,14 +281,14 @@ class MergeSortTest {
     public void mergeThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expectedMessage = "The data should contain at least one element, but it is null";
+        String expected = "The data should contain at least one element, but it is null";
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 mergeSort.merge(data, 0, 1, 2));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
     }
 
     @Test
@@ -338,7 +307,7 @@ class MergeSortTest {
     public void mergeLeavesDataUnchangedWhenContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
-        expected = new ArrayList<>(Collections.singletonList(6));
+        ArrayList<Integer> expected = new ArrayList<>(Collections.singletonList(6));
 
         // Act
         mergeSort.merge(data, 0, 1, 2);
@@ -352,13 +321,117 @@ class MergeSortTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(9, 7));
         int lowIndex = -1;
-        String expectedMessage = "lowIndex must be >= 0 but is " + lowIndex;
+        String expected = "lowIndex must be >= 0 but is " + lowIndex;
 
         // Act
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
                 mergeSort.merge(data, lowIndex, 1, 2));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        Assertions.assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenMiddleIndexGreaterThanDataSizeMinusOne() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        int middleIndex = 2;
+        String expected = "middleIndex must be <= data.size() - 1, but middleIndex is " +
+                middleIndex + " and (data.size() - 1) equals " + (data.size() - 1);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, 0, middleIndex, 3));
+
+        // Assert
+        Assertions.assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenLowIndexGreaterThanMiddleIndex() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        int lowIndex = 2;
+        int middleIndex = 1;
+        String expected = "lowIndex must be <= middleIndex, but lowIndex is " + lowIndex +
+                " and middleIndex is " + middleIndex;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, lowIndex, middleIndex, 3));
+
+        // Assert
+        Assertions.assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenHighIndexGreaterThanDataSizeMinusOne() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        int highIndex = 2;
+        String expected = "highIndex must be <= data.size() - 1, but highIndex is " +
+                highIndex + " and (data.size() - 1) equals " + (data.size() - 1);
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, 0, 1, highIndex));
+
+        // Assert
+        Assertions.assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void mergeThrowsExceptionWhenMiddleIndexGreaterThanHighIndex() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(9, 7));
+        int middleIndex = 1;
+        int highIndex = 0;
+        String expected = "middleIndex must be <= highIndex, but middleIndex is " + middleIndex +
+                " and highIndex is " + highIndex;
+
+        // Act
+        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+                mergeSort.merge(data, 0, middleIndex, highIndex));
+
+        // Assert
+        Assertions.assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void mergeCorrectlyMergesValidDataWhenIndicesAreValid() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(7, 9, 3, 5));
+        ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(3, 5, 7, 9));
+
+        // Act
+        mergeSort.merge(data, 0, 1, data.size() - 1);
+
+        // Assert
+        Assertions.assertEquals(expected, data);
+    }
+
+    private void setCurrentPointerMap(int low, int high) {
+        when(currentPointerMap.get(MergeSort.getLow())).thenReturn(low);
+        when(currentPointerMap.get(MergeSort.getHigh())).thenReturn(high);
+        mergeSort.setCurrentPointerMap(currentPointerMap);
+    }
+
+    private void setParentNodes(int childNode, int parentNode) {
+        when(parentNodes.get(childNode)).thenReturn(parentNode);
+        mergeSort.setParentNodes(parentNodes);
+    }
+
+    private void setNumberOfSortedChildrenMap(int node, int numberOfSortedChildren) {
+        when(numberOfSortedChildrenMap.get(node)).thenReturn(numberOfSortedChildren);
+        mergeSort.setNumberOfSortedChildrenMap(numberOfSortedChildrenMap);
+    }
+
+    private void setTreeNodePointerMaps(int node, int middle, int high) {
+        Map<String, Integer> pointerMap = new HashMap<>();
+        pointerMap.put(MergeSort.getLow(), 0);
+        pointerMap.put(MergeSort.getMiddle(), middle);
+        pointerMap.put(MergeSort.getHigh(), high);
+        when(treeNodePointerMaps.get(node)).thenReturn(pointerMap);
+        mergeSort.setTreeNodePointerMaps(treeNodePointerMaps);
     }
 }

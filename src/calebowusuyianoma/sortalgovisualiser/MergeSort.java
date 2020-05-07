@@ -146,7 +146,8 @@ public class MergeSort extends Sort {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         }
 
-        if ((data.isEmpty()) || (data.size() == 1)) {
+        // The third condition may occur when timsort calls merge()
+        if ((data.isEmpty()) || (data.size() == 1) || (middleIndex > data.size() - 1)) {
             return;
         }
 
@@ -173,11 +174,6 @@ public class MergeSort extends Sort {
     private void validateIndices(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
         if (lowIndex < 0) {
             throw new IllegalArgumentException("lowIndex must be >= 0 but is " + lowIndex);
-        }
-
-        if (middleIndex > data.size() - 1) {
-            throw new IllegalArgumentException("middleIndex must be <= data.size() - 1, but middleIndex is " +
-                    middleIndex + " and (data.size() - 1) equals " + (data.size() - 1));
         }
 
         if (lowIndex > middleIndex) {

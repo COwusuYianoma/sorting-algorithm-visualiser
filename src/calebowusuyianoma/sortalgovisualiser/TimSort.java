@@ -29,20 +29,21 @@ public class TimSort extends Sort {
                 shiftSortedElementToTheRight(data);
                 if (shouldInsertKey(data)) {
                     data.set(sortedElementIndex + 1, key);
-                } else if (keyIndex + 1 > right) {
-                    insertionSortLoopIndex += minimumRun;
+                    if (keyIndex == right) {
+                        insertionSortLoopIndex += minimumRun;
+                    }
                 }
             } else if (++keyIndex <= right) {
                 key = data.get(keyIndex);
                 sortedElementIndex = keyIndex - 1;
 
-                if (shouldInsertKey(data)) {
+                if (shouldInsertKey(data) && (keyIndex == right)) {
                     insertionSortLoopIndex += minimumRun;
                 }
-            } else if (insertionSortLoopTerminationExpressionValid()) {
-                runningInsertionSort = false;
-            } else {
+            } else if (!insertionSortLoopTerminationExpressionValid()) {
                 setInsertionSortLoopVariables(data);
+            } else {
+                runningInsertionSort = false;
             }
         } else if (runSize < numberOfElements) {
             if (!inMergeForLoop) {
@@ -85,7 +86,7 @@ public class TimSort extends Sort {
         data.set(sortedElementIndex + 1, data.get(sortedElementIndex));
         sortedElementIndex -= 1;
     }
-    
+
     private boolean insertionSortLoopTerminationExpressionValid() {
         return insertionSortLoopIndex >= numberOfElements - 1;
     }

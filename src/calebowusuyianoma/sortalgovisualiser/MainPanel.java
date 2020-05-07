@@ -28,7 +28,7 @@ import static java.util.Collections.max;
 public class MainPanel extends JPanel implements ActionListener {
     private final int timerDelayMultiplier = 5000;
     private final int spaceBetweenBars = 5;
-    private final String[] validSortingAlgorithms = new String[]{BubbleSort.getName(), InsertionSort.getName(),
+    private final String[] validSortingAlgorithms = new String[] {BubbleSort.getName(), InsertionSort.getName(),
             MergeSort.getName(), TimSort.getName()};
     private final Timer timer = new Timer(100, this);
     private final JSlider sortingSpeedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
@@ -36,19 +36,20 @@ public class MainPanel extends JPanel implements ActionListener {
 
     private long startTime, endTime, runningTime;
     private boolean sorting, sortingAlgorithmJustRan;
-    private String sortingAlgorithmSelected, sortingAlgorithmRunning;
+    private String sortingAlgorithmRunning = "";
+    private String sortingAlgorithmSelected;
     private ArrayList<Integer> data, preSortedData;
-    private BubbleSort bubbleSort;
-    private InsertionSort insertionSort;
-    private MergeSort mergeSort;
-    private TimSort timSort;
+    private BubbleSort bubbleSort = new BubbleSort();
+    private InsertionSort insertionSort = new InsertionSort();
+    private MergeSort mergeSort = new MergeSort();
+    private TimSort timSort = new TimSort();
 
     public MainPanel() {
         int defaultArraySize = 10;
         int minimumPossibleValue = 1;
         int maximumPossibleValue = 100;
-        ArrayGenerator arrayGenerator = new ArrayGenerator();
-        data = arrayGenerator.generateRandomPositiveIntegerArray(defaultArraySize, minimumPossibleValue, maximumPossibleValue);
+        data = ArrayGenerator.generateRandomPositiveIntegerArray(defaultArraySize, minimumPossibleValue,
+                maximumPossibleValue);
         setPreSortedData();
 
         JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
@@ -60,7 +61,8 @@ public class MainPanel extends JPanel implements ActionListener {
         generateArrayButton.addActionListener(e -> {
             if (!sorting) {
                 int arraySize = (int) arraySizeSpinner.getValue();
-                data = arrayGenerator.generateRandomPositiveIntegerArray(arraySize, minimumPossibleValue, maximumPossibleValue);
+                data = ArrayGenerator.generateRandomPositiveIntegerArray(arraySize, minimumPossibleValue,
+                        maximumPossibleValue);
                 setPreSortedData();
                 sortingAlgorithmJustRan = false;
                 resetRunningTime();
@@ -78,22 +80,8 @@ public class MainPanel extends JPanel implements ActionListener {
         sortingAlgorithmsList.addActionListener(e ->
                 sortingAlgorithmSelected = (String) sortingAlgorithmsList.getSelectedItem());
 
-        JPanel sortingSpeedSliderPanel = new JPanel();
-        sortingSpeedSliderPanel.setLayout(new BoxLayout(sortingSpeedSliderPanel, BoxLayout.PAGE_AXIS));
-
-        JLabel sortingSpeedSliderLabel = new JLabel("Sorting speed");
-        sortingSpeedSliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        sortingSpeedSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
-        sortingSpeedSlider.setMajorTickSpacing(50);
-        sortingSpeedSlider.setMinorTickSpacing(10);
-        sortingSpeedSlider.setPaintTicks(true);
-        sortingSpeedSlider.setPaintLabels(true);
-        sortingSpeedSlider.setVisible(true);
-        sortingSpeedSlider.addChangeListener(this::respondToSortingSpeedSliderChange);
-
-        sortingSpeedSliderPanel.add(sortingSpeedSliderLabel);
-        sortingSpeedSliderPanel.add(sortingSpeedSlider);
+        SortingSpeedSliderPanel sortingSpeedSliderPanel = new SortingSpeedSliderPanel(sortingSpeedSlider);
+        sortingSpeedSliderPanel.setSliderPanelListener(this::respondToSortingSpeedSliderChange);
 
         JButton sortButton = new JButton("Sort");
         sortButton.addActionListener(this);
@@ -121,8 +109,7 @@ public class MainPanel extends JPanel implements ActionListener {
     }
 
     private void setPreSortedData() {
-        preSortedData = new ArrayList<>();
-        preSortedData.addAll(data);
+        preSortedData = new ArrayList<>(data);
     }
 
     private void resetRunningTime() {
@@ -188,6 +175,10 @@ public class MainPanel extends JPanel implements ActionListener {
                 case TIMSORT:
                     respondToAction(e, timSort);
                     break;
+                case UNKNOWN:
+                default:
+                    throw new IllegalStateException("Action performed while running unknown sorting algorithm: " +
+                            sortingAlgorithmRunning);
             }
         } else if (Arrays.asList(validSortingAlgorithms).contains(sortingAlgorithmSelected)) {
             runSortingAlgorithm();
@@ -460,7 +451,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int key = timSort.getKey();
         int previousMergeStartIndex = timSort.getPreviousMergeStartIndex();
         int mergeEndIndex = timSort.getMergeEndIndex();
-        boolean runningInsertionSort = timSort.runningInsertionSort();
+        boolean runningInsertionSort = timSort.isRunningInsertionSort();
         for (int i = 0; i < data.size(); i++) {
             if (timSort.isSorted()) {
                 g.setColor(Color.MAGENTA);
@@ -490,5 +481,25 @@ public class MainPanel extends JPanel implements ActionListener {
     private boolean currentElementIsBeingMerged(int index, int mergeStartIndex, int mergeEndIndex) {
 
         return (index >= mergeStartIndex) && (index <= mergeEndIndex);
+    }
+
+    public void setSorting(boolean sorting) {
+        this.sorting = sorting;
+    }
+
+    public void setSortingAlgorithmRunning(String sortingAlgorithmRunning) {
+        if (sortingAlgorithmRunning == null) {
+            throw new IllegalArgumentException("Cannot assign null to sortingAlgorithmRunning text");
+        }
+
+        this.sortingAlgorithmRunning = sortingAlgorithmRunning;
+    }
+
+    public Sort getBubbleSort() {
+        return bubbleSort;
+    }
+
+    public boolean isSorting() {
+        return sorting;
     }
 }

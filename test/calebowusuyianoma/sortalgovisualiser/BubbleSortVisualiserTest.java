@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BubbleSortVisualiserTest {
-    private final BubbleSortVisualiser bubbleSortVisualiser = new BubbleSortVisualiser(5);
+    private final BubbleSortVisualiser bubbleSortVisualiser = new BubbleSortVisualiser();
 
     private ArrayList<Integer> data;
 
@@ -46,7 +46,6 @@ class BubbleSortVisualiserTest {
     public void moveToNextStepSetsSortedToTrueWhenDataContainsSingleElement() {
         // Arrange
         data = new ArrayList<>(Collections.singletonList(6));
-        bubbleSortVisualiser.setSorted(false);
 
         // Act
         bubbleSortVisualiser.moveToNextStep(data);
@@ -162,7 +161,6 @@ class BubbleSortVisualiserTest {
         // Arrange
         data = new ArrayList<>(Arrays.asList(5, 7, 9));
         bubbleSortVisualiser.setRunning(true);
-        bubbleSortVisualiser.setSorted(false);
         bubbleSortVisualiser.setOuterForLoopVariable(data.size() - 1);
         bubbleSortVisualiser.setInnerForLoopVariable(data.size() - 2);
 
@@ -205,7 +203,6 @@ class BubbleSortVisualiserTest {
         int size = ThreadLocalRandom.current().nextInt(1, 1001);
         data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 200);
         bubbleSortVisualiser.setRunning(true);
-        bubbleSortVisualiser.setSorted(false);
         bubbleSortVisualiser.setOuterForLoopVariable(0);
         bubbleSortVisualiser.setInnerForLoopVariable(data.size() - 1);
 

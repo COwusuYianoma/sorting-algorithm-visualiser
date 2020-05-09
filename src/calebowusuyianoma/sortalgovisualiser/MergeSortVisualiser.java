@@ -11,6 +11,8 @@ public class MergeSortVisualiser extends SortVisualiser {
     private static final String MIDDLE = "middle";
     private static final String HIGH = "high";
 
+    private final MergeSort mergeSort = new MergeSort();
+
     private boolean shouldCalculateMiddleIndex;
     private int spaceBetweenBars, currentTreeNode;
     private Map<Integer, Integer> parentNodes = new HashMap<>();
@@ -57,7 +59,8 @@ public class MergeSortVisualiser extends SortVisualiser {
                 moveToRightChild();
                 setParentAndChildrenData(previousTreeNode);
             } else {
-                merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE), currentPointerMap.get(HIGH));
+                mergeSort.merge(data, currentPointerMap.get(LOW), currentPointerMap.get(MIDDLE),
+                        currentPointerMap.get(HIGH));
                 sortedTreeNodes.put(currentTreeNode, true);
                 if (currentTreeNodeIsRoot(data)) {
                     setSorted(true);
@@ -131,75 +134,22 @@ public class MergeSortVisualiser extends SortVisualiser {
         return currentTreeNode == calculateUniqueNodeId(0, data.size() - 1);
     }
 
-    // TODO: consider calling MergeSort.merge()
-    public void merge(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
-        if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
-        }
-
-        // The third condition may occur when timsort calls merge()
-        if ((data.isEmpty()) || (data.size() == 1) || (middleIndex > data.size() - 1)) {
-            return;
-        }
-
-        validateIndices(data, lowIndex, middleIndex, highIndex);
-
-        ArrayList<Integer> leftSubArray = new ArrayList<>(data.subList(lowIndex, middleIndex + 1));
-        ArrayList<Integer> rightSubArray = new ArrayList<>(data.subList(middleIndex + 1, highIndex + 1));
-        leftSubArray.add(Integer.MAX_VALUE);
-        rightSubArray.add(Integer.MAX_VALUE);
-
-        int i = 0;
-        int j = 0;
-        for (int k = lowIndex; k < highIndex + 1; k++) {
-            if (leftSubArray.get(i) < rightSubArray.get(j)) {
-                data.set(k, leftSubArray.get(i));
-                i++;
-            } else {
-                data.set(k, rightSubArray.get(j));
-                j++;
-            }
-        }
-    }
-
-    // TODO: consider (re)moving this
-    private void validateIndices(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
-        if (lowIndex < 0) {
-            throw new IllegalArgumentException("lowIndex must be >= 0 but is " + lowIndex);
-        }
-
-        if (lowIndex > middleIndex) {
-            throw new IllegalArgumentException("lowIndex must be <= middleIndex, but lowIndex is " + lowIndex +
-                    " and middleIndex is " + middleIndex);
-        }
-
-        if (highIndex > data.size() - 1) {
-            throw new IllegalArgumentException("highIndex must be <= data.size() - 1, but highIndex is " +
-                    highIndex + " and (data.size() - 1) equals " + (data.size() - 1));
-        }
-
-        if (middleIndex > highIndex) {
-            throw new IllegalArgumentException("middleIndex must be <= highIndex, but middleIndex is " + middleIndex +
-                    " and highIndex is " + highIndex);
-        }
-    }
-
     public void paint(Graphics g, int maxArrayValue, int maxBarHeight,
                                            int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (isSorted()) {
+            if (isSorted()) { // TODO: determine if this condition is needed. If it's not, remove it and the corresponding tests.
                 g.setColor(Color.MAGENTA);
             } else if (sortedTreeNodes.containsKey(currentTreeNode)) {
-                if (currentElementIsInSubArrayThatWasJustSorted(currentPointerMap, i)) {
+                if (currentElementIsInSubArrayThatWasJustSorted(i)) {
                     g.setColor(Color.MAGENTA);
                 } else {
                     g.setColor(Color.BLACK);
                 }
             } else if (currentPointerMap.containsValue(i)) {
-                if (currentElementCorrespondsToMultiplePointers(currentPointerMap, i)) {
+                if (currentElementCorrespondsToMiddleAndOuterPointers(i)) {
                     g.setColor(Color.GREEN);
-                } else if (currentElementOnlyCorrespondsToMiddlePointer(currentPointerMap, i)) {
+                } else if (currentElementOnlyCorrespondsToMiddlePointer(i)) {
                     g.setColor(Color.YELLOW);
                 } else {
                     g.setColor(Color.CYAN);
@@ -213,27 +163,100 @@ public class MergeSortVisualiser extends SortVisualiser {
         }
     }
 
-    // TODO: remove unnecessary args
-    private boolean currentElementIsInSubArrayThatWasJustSorted(Map<String, Integer> currentTreeNodePointerMap,
-                                                                int index) {
-
-        return (currentTreeNodePointerMap.get(MergeSort.getLow()) <= index) &&
-                (currentTreeNodePointerMap.get(MergeSort.getHigh()) >= index);
+    private boolean currentElementIsInSubArrayThatWasJustSorted(int index) {
+        return (currentPointerMap.get(LOW) <= index) &&
+                (currentPointerMap.get(HIGH) >= index);
     }
 
-    // TODO: remove unnecessary args
-    private boolean currentElementCorrespondsToMultiplePointers(Map<String, Integer> currentTreeNodePointerMap,
-                                                                int index) {
-
-        return (currentTreeNodePointerMap.get(MergeSort.getLow()) == index ||
-                currentTreeNodePointerMap.get(MergeSort.getHigh()) == index) &&
-                (currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index);
+    private boolean currentElementCorrespondsToMiddleAndOuterPointers(int index) {
+        return (currentPointerMap.get(LOW) == index || currentPointerMap.get(HIGH) == index) &&
+                (currentPointerMap.get(MIDDLE) == index);
     }
 
-    // TODO: remove unnecessary args
-    private boolean currentElementOnlyCorrespondsToMiddlePointer(Map<String, Integer> currentTreeNodePointerMap,
-                                                                 int index) {
+    private boolean currentElementOnlyCorrespondsToMiddlePointer(int index) {
+        return currentPointerMap.get(MIDDLE) == index;
+    }
 
-        return currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index;
+    public static String getLow() {
+        return LOW;
+    }
+
+    public static String getMiddle() {
+        return MIDDLE;
+    }
+
+    public static String getHigh() {
+        return HIGH;
+    }
+
+    public int getCurrentTreeNode() {
+        return currentTreeNode;
+    }
+
+    public Map<String, Integer> getCurrentPointerMap() {
+        return currentPointerMap;
+    }
+
+    public Map<Integer, Map<String, Integer>> getTreeNodePointerMaps() {
+        return treeNodePointerMaps;
+    }
+
+    public Map<Integer, Boolean> getSortedTreeNodes() {
+        return sortedTreeNodes;
+    }
+
+    public Map<Integer, Integer> getParentNodes() {
+        return parentNodes;
+    }
+
+    public Map<Integer, Integer> getNumberOfSortedChildrenMap() {
+        return numberOfSortedChildrenMap;
+    }
+
+    public boolean getShouldCalculateMiddleIndex() {
+        return shouldCalculateMiddleIndex;
+    }
+
+    public void setCurrentTreeNode(int value) {
+        currentTreeNode = value;
+    }
+
+    public void setCurrentPointerMap(Map<String, Integer> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        currentPointerMap = map;
+    }
+
+    public void setParentNodes(Map<Integer, Integer> parentNodes) {
+        if (parentNodes == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        this.parentNodes = parentNodes;
+    }
+
+    public void setSortedTreeNodes(Map<Integer, Boolean> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        sortedTreeNodes = map;
+    }
+
+    public void setNumberOfSortedChildrenMap(Map<Integer, Integer> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        numberOfSortedChildrenMap = map;
+    }
+
+    public void setTreeNodePointerMaps(Map<Integer, Map<String, Integer>> map) {
+        if (map == null) {
+            throw new IllegalArgumentException("Cannot assign null to map");
+        }
+        treeNodePointerMaps = map;
+    }
+
+    public void setShouldCalculateMiddleIndex(boolean shouldCalculate) {
+        shouldCalculateMiddleIndex = shouldCalculate;
     }
 }

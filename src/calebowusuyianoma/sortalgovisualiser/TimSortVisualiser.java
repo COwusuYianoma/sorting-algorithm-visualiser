@@ -102,9 +102,9 @@ public class TimSortVisualiser extends SortVisualiser {
                                           int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (isSorted()) {
+            if (isSorted()) { // todo: decide if this is needed. If not, remove it and corresponding tests.
                 g.setColor(Color.MAGENTA);
-            } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i, left, keyIndex)) {
+            } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i)) {
                 g.setColor(Color.ORANGE);
             } else if (runningInsertionSort && i == keyIndex) {
                 if (data.get(i) == key) {
@@ -112,7 +112,7 @@ public class TimSortVisualiser extends SortVisualiser {
                 } else {
                     g.setColor(Color.ORANGE);
                 }
-            } else if (!runningInsertionSort && currentElementIsBeingMerged(i, previousMergeStartIndex, mergeEndIndex)) {
+            } else if (!runningInsertionSort && currentElementIsBeingMerged(i)) {
                 g.setColor(Color.ORANGE);
             } else {
                 g.setColor(Color.BLACK);
@@ -123,14 +123,99 @@ public class TimSortVisualiser extends SortVisualiser {
         }
     }
 
-    // TODO: remove unnecessary args
-    private boolean currentElementIsPartOfSortedInsertionSortSubArray(int index, int left, int keyIndex) {
+    private boolean currentElementIsPartOfSortedInsertionSortSubArray(int index) {
         return (index >= left) && (index < keyIndex);
     }
 
-    // TODO: remove unnecessary args
-    private boolean currentElementIsBeingMerged(int index, int mergeStartIndex, int mergeEndIndex) {
+    private boolean currentElementIsBeingMerged(int index) {
+        return (index >= previousMergeStartIndex) && (index <= mergeEndIndex);
+    }
 
-        return (index >= mergeStartIndex) && (index <= mergeEndIndex);
+    public int getKey() {
+        return key;
+    }
+
+    public int getKeyIndex() {
+        return keyIndex;
+    }
+
+    public int getLeft() {
+        return left;
+    }
+
+    public int getRight() {
+        return right;
+    }
+
+    public int getNumberOfElements() {
+        return numberOfElements;
+    }
+
+    public int getMinimumRun() {
+        return minimumRun;
+    }
+
+    public int getRunSize() {
+        return runSize;
+    }
+
+    public int getInsertionSortLoopIndex() {
+        return insertionSortLoopIndex;
+    }
+
+    public int getSortedElementIndex() {
+        return sortedElementIndex;
+    }
+
+    public boolean isRunningInsertionSort() {
+        return runningInsertionSort;
+    }
+
+    public void setKeyIndex(int index) {
+        keyIndex = index;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
+
+    public void setSortedElementIndex(int index) {
+        sortedElementIndex = index;
+    }
+
+    public void setInsertionSortLoopIndex(int index) {
+        insertionSortLoopIndex = index;
+    }
+
+    public void setRight(int right) {
+        this.right = right;
+    }
+
+    public void setLeft(int left) {
+        this.left = left;
+    }
+
+    public void setNumberOfElements(int numberOfElements) {
+        this.numberOfElements = numberOfElements;
+    }
+
+    public void setRunSize(int runSize) {
+        this.runSize = runSize;
+    }
+
+    public void setPreviousMergeStartIndex(int index) {
+        previousMergeStartIndex = index;
+    }
+
+    public void setMergeEndIndex(int index) {
+        mergeEndIndex = index;
+    }
+
+    public void setRunningInsertionSort(boolean running) {
+        runningInsertionSort = running;
+    }
+
+    public void setInMergeForLoop(boolean inMergeForLoop) {
+        this.inMergeForLoop = inMergeForLoop;
     }
 }

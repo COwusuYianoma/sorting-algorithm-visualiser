@@ -25,6 +25,14 @@ public abstract class SortVisualiser {
     protected void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight,
                                int xCoordinate, int width, ArrayList<Integer> data) {
 
+        if (g == null) {
+            throw new IllegalArgumentException("The Graphics object should not be null");
+        }
+
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        }
+
         int height = (int) (((double) data.get(index) / maxValue) * maxBarHeight);
         g.fillRect(xCoordinate, 0, width, height);
     }

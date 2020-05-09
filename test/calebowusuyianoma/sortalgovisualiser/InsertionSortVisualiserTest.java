@@ -222,4 +222,47 @@ class InsertionSortVisualiserTest {
         // Assert
         verify(g, times(data.size() - (keyIndex + 1))).setColor(Color.BLACK);
     }
+
+    // todo: consider extracting these common methods to a separate test class
+    @Test
+    public void fillRectangleThrowsExceptionWhenGraphicsObjectIsNull() {
+        // Arrange
+        String expected = "The Graphics object should not be null";
+
+        // Act
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                insertionSortVisualiser.fillRectangle(null, 1, 1, 1, 1, 1,
+                        data));
+
+        // Assert
+        assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void fillRectangleThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        String expected = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+                insertionSortVisualiser.fillRectangle(g, 1, 1, 1, 1, 1,
+                        null));
+
+        // Assert
+        assertEquals(expected, exception.getMessage());
+    }
+
+    @Test
+    public void fillRectangleCallsFillRectWithCorrectParameters() {
+        // Arrange
+        data = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+        int xCoordinate = 1;
+        int width = 1;
+
+        // Act
+        insertionSortVisualiser.fillRectangle(g, 1, 1, 1, xCoordinate, width, data);
+
+        // Assert
+        verify(g, times(1)).fillRect(eq(xCoordinate), eq(0), eq(width), anyInt());
+    }
 }

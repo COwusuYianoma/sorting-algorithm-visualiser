@@ -4,8 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class BubbleSortVisualiser extends SortVisualiser {
+public class BubbleSortVisualiser implements SortVisualiser {
+    private final BubbleSort bubbleSort = new BubbleSort();
+
     private int spaceBetweenBars, outerForLoopVariable, innerForLoopVariable;
+    private boolean running, sorted;
 
     public BubbleSortVisualiser() {}
 
@@ -13,17 +16,18 @@ public class BubbleSortVisualiser extends SortVisualiser {
         this.spaceBetweenBars = spaceBetweenBars;
     }
 
+    @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         } else if (data.size() <= 1) {
             setSorted(true);
-        } else if (!isRunning()) {
+        } else if (!running) {
             setRunning(true);
             innerForLoopVariable = data.size() - 1;
         } else if (!innerForLoopTerminationExpressionValid()) {
             if (shouldSwap(data)) {
-                swap(data, innerForLoopVariable);
+                bubbleSort.swap(data, innerForLoopVariable);
             }
             innerForLoopVariable--;
 
@@ -45,32 +49,31 @@ public class BubbleSortVisualiser extends SortVisualiser {
         return data.get(innerForLoopVariable) < data.get(innerForLoopVariable - 1);
     }
 
-    // TODO: consider calling BubbleSort.swap() instead
-    private void swap(ArrayList<Integer> data, int key) {
-        int temp = data.get(key);
-        data.set(key, data.get(key - 1));
-        data.set(key - 1, temp);
-    }
-
     private boolean outerForLoopTerminationExpressionValid(ArrayList<Integer> data) {
         return outerForLoopVariable >= data.size() - 1;
     }
 
+    @Override
     public void paint(Graphics g, int maxArrayValue, int maxBarHeight,
                                              int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (isSorted()) { // TODO: determine if this condition is needed. If it's not, remove it and the corresponding tests.
+            if (sorted) {
                 g.setColor(Color.MAGENTA);
-            } else if (isRunning() && ((i == outerForLoopVariable) || (i == innerForLoopVariable))) { // TODO: refactor this conditional
+            } else if (running && indexEqualsForLoopVariableValue(i)) {
                 g.setColor(Color.CYAN);
             } else {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
+            int height = (int) (((double) data.get(i) / maxArrayValue) * maxBarHeight);
+            g.fillRect(xCoordinate, 0, barWidth, height);
             xCoordinate += (barWidth + spaceBetweenBars);
         }
+    }
+
+    private boolean indexEqualsForLoopVariableValue(int index) {
+        return ((index == outerForLoopVariable) || (index == innerForLoopVariable));
     }
 
     public int getInnerForLoopVariable() {
@@ -79,6 +82,25 @@ public class BubbleSortVisualiser extends SortVisualiser {
 
     public int getOuterForLoopVariable() {
         return outerForLoopVariable;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public boolean isSorted() {
+        return sorted;
+    }
+
+    @Override
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    @Override
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
     }
 
     public void setInnerForLoopVariable(int value) {

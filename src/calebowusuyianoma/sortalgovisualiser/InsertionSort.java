@@ -2,45 +2,8 @@ package calebowusuyianoma.sortalgovisualiser;
 
 import java.util.ArrayList;
 
-public class InsertionSort extends Sort {
+public class InsertionSort {
     private static final String NAME = "Insertion sort";
-
-    private int keyIndex, key, sortedElementIndex;
-
-    public void moveToNextStep(ArrayList<Integer> data) {
-        if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
-        } else if (data.size() <= 1) {
-            setSorted(true);
-        } else if (!isRunning()) {
-            setRunning(true);
-            keyIndex = 1;
-            setVariableValuesBeforeSortingData(data);
-        } else if (keyLessThanSortedElement(data)) {
-            shiftSortedElementToTheRight(data);
-        } else {
-            data.set(sortedElementIndex + 1, key);
-            if (++keyIndex < data.size()) {
-                setVariableValuesBeforeSortingData(data);
-            } else {
-                setSorted(true);
-            }
-        }
-    }
-
-    private void setVariableValuesBeforeSortingData(ArrayList<Integer> data) {
-        key = data.get(keyIndex);
-        sortedElementIndex = keyIndex - 1;
-    }
-
-    private boolean keyLessThanSortedElement(ArrayList<Integer> data) {
-        return (sortedElementIndex >= 0) && (data.get(sortedElementIndex) > key);
-    }
-
-    private void shiftSortedElementToTheRight(ArrayList<Integer> data) {
-        data.set(sortedElementIndex + 1, data.get(sortedElementIndex));
-        sortedElementIndex -= 1;
-    }
 
     public void sort(ArrayList<Integer> data) {
         if (data == null) {
@@ -82,9 +45,9 @@ public class InsertionSort extends Sort {
                     " and right is " + right);
         }
 
-        if (left >= data.size() - 1) {
+        if ((left >= data.size() - 1) && (left != right)) {
             throw new IllegalArgumentException("Index left must be < data.size() - 1, but left is " + left +
-                    " and (data.size() - 1) equals " + (data.size() - 1));
+                    ", (data.size() - 1) equals " + (data.size() - 1) + " and right is " + right);
         }
 
         if (right > data.size() - 1) {
@@ -95,29 +58,5 @@ public class InsertionSort extends Sort {
 
     public static String getName() {
         return NAME;
-    }
-
-    public int getKeyIndex() {
-        return keyIndex;
-    }
-
-    public int getKey() {
-        return key;
-    }
-
-    public int getSortedElementIndex() {
-        return sortedElementIndex;
-    }
-
-    public void setKeyIndex(int index) {
-        keyIndex = index;
-    }
-
-    public void setKey(int value) {
-        key = value;
-    }
-
-    public void setSortedElementIndex(int index) {
-        sortedElementIndex = index;
     }
 }

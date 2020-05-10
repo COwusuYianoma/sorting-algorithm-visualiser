@@ -1,6 +1,5 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -8,11 +7,28 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class TimSortTest {
     private final TimSort timSort = new TimSort();
 
     private ArrayList<Integer> data;
     private ArrayList<Integer> expected;
+
+    @Test
+    public void sortThrowsExceptionWhenDataIsNull() {
+        // Arrange
+        data = null;
+        String expected = "The data should contain at least one element, but it is null";
+
+        // Act
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> timSort.sort(data));
+
+        // Assert
+        assertEquals(expected, exception.getMessage());
+    }
 
     @Test
     public void sortLeavesDataUnchangedWhenEmpty() {
@@ -23,7 +39,7 @@ class TimSortTest {
         timSort.sort(data);
 
         // Assert
-        Assertions.assertTrue(data.isEmpty());
+        assertTrue(data.isEmpty());
     }
 
     @Test
@@ -36,7 +52,7 @@ class TimSortTest {
         timSort.sort(data);
 
         // Assert
-        Assertions.assertEquals(expected, data);
+        assertEquals(expected, data);
     }
 
     @Test
@@ -49,7 +65,7 @@ class TimSortTest {
         timSort.sort(data);
 
         // Assert
-        Assertions.assertEquals(expected, data);
+        assertEquals(expected, data);
     }
 
     @Test
@@ -62,7 +78,7 @@ class TimSortTest {
         timSort.sort(data);
 
         // Assert
-        Assertions.assertEquals(expected, data);
+        assertEquals(expected, data);
     }
 
     @Test
@@ -70,11 +86,13 @@ class TimSortTest {
         // Arrange
         int size = ThreadLocalRandom.current().nextInt(1, 1001);
         data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 1, 2001);
+        ArrayList<Integer> expected = new ArrayList<>(data);
+        Collections.sort(expected);
 
         // Act
         timSort.sort(data);
 
         // Assert
-        Assertions.assertTrue(timSort.isSorted(data));
+        assertEquals(expected, data);
     }
 }

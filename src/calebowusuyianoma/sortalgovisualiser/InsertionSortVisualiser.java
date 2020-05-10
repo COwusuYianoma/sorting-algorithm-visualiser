@@ -4,8 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class InsertionSortVisualiser extends SortVisualiser {
+public class InsertionSortVisualiser implements SortVisualiser {
     private int spaceBetweenBars, keyIndex, key, sortedElementIndex;
+    private boolean sorted, running;
 
     public InsertionSortVisualiser() {}
 
@@ -13,13 +14,14 @@ public class InsertionSortVisualiser extends SortVisualiser {
         this.spaceBetweenBars = spaceBetweenBars;
     }
 
+    @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         } else if (data.size() <= 1) {
-            setSorted(true);
-        } else if (!isRunning()) {
-            setRunning(true);
+            sorted = true;
+        } else if (!running) {
+            running = true;
             keyIndex = 1;
             setVariableValuesBeforeSortingData(data);
         } else if (keyLessThanSortedElement(data)) {
@@ -48,11 +50,14 @@ public class InsertionSortVisualiser extends SortVisualiser {
         sortedElementIndex -= 1;
     }
 
+    @Override
     public void paint(Graphics g, int maxArrayValue, int maxBarHeight,
                                                 int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (i < keyIndex) {
+            if (sorted) {
+                g.setColor(Color.MAGENTA);
+            } else if (i < keyIndex) {
                 g.setColor(Color.ORANGE);
             } else if (i == keyIndex) {
                 if (data.get(i) == key) {
@@ -64,7 +69,8 @@ public class InsertionSortVisualiser extends SortVisualiser {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
+            int height = (int) (((double) data.get(i) / maxArrayValue) * maxBarHeight);
+            g.fillRect(xCoordinate, 0, barWidth, height);
             xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
@@ -79,6 +85,25 @@ public class InsertionSortVisualiser extends SortVisualiser {
 
     public int getSortedElementIndex() {
         return sortedElementIndex;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public boolean isSorted() {
+        return sorted;
+    }
+
+    @Override
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    @Override
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
     }
 
     public void setKeyIndex(int index) {

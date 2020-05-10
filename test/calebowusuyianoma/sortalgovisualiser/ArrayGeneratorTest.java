@@ -1,10 +1,12 @@
 package calebowusuyianoma.sortalgovisualiser;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ArrayGeneratorTest {
     @Test
@@ -16,7 +18,7 @@ class ArrayGeneratorTest {
         ArrayList<Integer> data = ArrayGenerator.generateRandomPositiveIntegerArray(size, 5, 50);
 
         // Assert
-        Assertions.assertEquals(size, data.size());
+        assertEquals(size, data.size());
     }
 
     @Test
@@ -27,11 +29,11 @@ class ArrayGeneratorTest {
         String expectedMessage = "max and min should be > 0, but max is " + max + " and min is " + min;
 
         // Act
-        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
     @Test
@@ -42,11 +44,11 @@ class ArrayGeneratorTest {
         String expectedMessage = "max and min should be > 0, but max is " + max + " and min is " + min;
 
         // Act
-        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
     @Test
@@ -57,10 +59,10 @@ class ArrayGeneratorTest {
         String expectedMessage = "max should be > min, but max is " + max + " and min is " + min;
 
         // Act
-        Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 ArrayGenerator.generateRandomPositiveIntegerArray(100, min, max));
 
         // Assert
-        Assertions.assertEquals(expectedMessage, exception.getMessage());
+        assertEquals(expectedMessage, exception.getMessage());
     }
 }

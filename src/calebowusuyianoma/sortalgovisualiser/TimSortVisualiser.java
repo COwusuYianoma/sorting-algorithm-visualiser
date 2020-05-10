@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class TimSortVisualiser extends SortVisualiser {
-    // TODO: decide if the visualisers should keep the data as state; my gut says no
-
+public class TimSortVisualiser implements SortVisualiser {
     private final int minimumRun = 32;
     private final MergeSort mergeSort = new MergeSort();
 
-    private boolean runningInsertionSort, inMergeForLoop;
+    private boolean running, sorted, runningInsertionSort, inMergeForLoop;
     private int spaceBetweenBars, numberOfElements, insertionSortLoopIndex, right, left, key, keyIndex,
             sortedElementIndex, runSize, mergeStartIndex, mergeEndIndex, previousMergeStartIndex;
 
@@ -20,12 +18,13 @@ public class TimSortVisualiser extends SortVisualiser {
         this.spaceBetweenBars = spaceBetweenBars;
     }
 
+    @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         } else if (data.size() <= 1) {
             setSorted(true);
-        } else if (!isRunning()) {
+        } else if (!running) {
             setRunning(true);
             numberOfElements = data.size();
             runSize = minimumRun;
@@ -98,11 +97,12 @@ public class TimSortVisualiser extends SortVisualiser {
         return insertionSortLoopIndex >= numberOfElements - 1;
     }
 
+    @Override
     public void paint(Graphics g, int maxArrayValue, int maxBarHeight,
                                           int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (isSorted()) { // todo: decide if this is needed. If not, remove it and corresponding tests.
+            if (sorted) {
                 g.setColor(Color.MAGENTA);
             } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i)) {
                 g.setColor(Color.ORANGE);
@@ -118,7 +118,8 @@ public class TimSortVisualiser extends SortVisualiser {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
+            int height = (int) (((double) data.get(i) / maxArrayValue) * maxBarHeight);
+            g.fillRect(xCoordinate, 0, barWidth, height);
             xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
@@ -169,6 +170,25 @@ public class TimSortVisualiser extends SortVisualiser {
 
     public boolean isRunningInsertionSort() {
         return runningInsertionSort;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public boolean isSorted() {
+        return sorted;
+    }
+
+    @Override
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    @Override
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
     }
 
     public void setKeyIndex(int index) {

@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MergeSortVisualiser extends SortVisualiser {
+public class MergeSortVisualiser implements SortVisualiser {
     private static final String LOW = "low";
     private static final String MIDDLE = "middle";
     private static final String HIGH = "high";
 
     private final MergeSort mergeSort = new MergeSort();
 
-    private boolean shouldCalculateMiddleIndex;
+    private boolean sorted, running, shouldCalculateMiddleIndex;
     private int spaceBetweenBars, currentTreeNode;
     private Map<Integer, Integer> parentNodes = new HashMap<>();
     private Map<String, Integer> currentPointerMap = new HashMap<>();
@@ -27,13 +27,14 @@ public class MergeSortVisualiser extends SortVisualiser {
         this.spaceBetweenBars = spaceBetweenBars;
     }
 
+    @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
             throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         } else if (data.size() <= 1) {
-            setSorted(true);
-        } else if (!isRunning()) {
-            setRunning(true);
+            sorted = true;
+        } else if (!running) {
+            running = true;
             initialiseMapsBeforeSorting(data);
             currentPointerMap = treeNodePointerMaps.get(currentTreeNode);
             shouldCalculateMiddleIndex = true;
@@ -63,7 +64,7 @@ public class MergeSortVisualiser extends SortVisualiser {
                         currentPointerMap.get(HIGH));
                 sortedTreeNodes.put(currentTreeNode, true);
                 if (currentTreeNodeIsRoot(data)) {
-                    setSorted(true);
+                    sorted = true;
                 }
             }
         }
@@ -134,11 +135,12 @@ public class MergeSortVisualiser extends SortVisualiser {
         return currentTreeNode == calculateUniqueNodeId(0, data.size() - 1);
     }
 
+    @Override
     public void paint(Graphics g, int maxArrayValue, int maxBarHeight,
                                            int xCoordinate, int barWidth, ArrayList<Integer> data) {
 
         for (int i = 0; i < data.size(); i++) {
-            if (isSorted()) { // TODO: determine if this condition is needed. If it's not, remove it and the corresponding tests.
+            if (sorted) {
                 g.setColor(Color.MAGENTA);
             } else if (sortedTreeNodes.containsKey(currentTreeNode)) {
                 if (currentElementIsInSubArrayThatWasJustSorted(i)) {
@@ -158,7 +160,8 @@ public class MergeSortVisualiser extends SortVisualiser {
                 g.setColor(Color.BLACK);
             }
 
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
+            int height = (int) (((double) data.get(i) / maxArrayValue) * maxBarHeight);
+            g.fillRect(xCoordinate, 0, barWidth, height);
             xCoordinate += (barWidth + spaceBetweenBars);
         }
     }
@@ -189,20 +192,12 @@ public class MergeSortVisualiser extends SortVisualiser {
         return HIGH;
     }
 
-    public int getCurrentTreeNode() {
-        return currentTreeNode;
-    }
-
     public Map<String, Integer> getCurrentPointerMap() {
         return currentPointerMap;
     }
 
     public Map<Integer, Map<String, Integer>> getTreeNodePointerMaps() {
         return treeNodePointerMaps;
-    }
-
-    public Map<Integer, Boolean> getSortedTreeNodes() {
-        return sortedTreeNodes;
     }
 
     public Map<Integer, Integer> getParentNodes() {
@@ -215,6 +210,25 @@ public class MergeSortVisualiser extends SortVisualiser {
 
     public boolean getShouldCalculateMiddleIndex() {
         return shouldCalculateMiddleIndex;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public boolean isSorted() {
+        return sorted;
+    }
+
+    @Override
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    @Override
+    public void setSorted(boolean sorted) {
+        this.sorted = sorted;
     }
 
     public void setCurrentTreeNode(int value) {

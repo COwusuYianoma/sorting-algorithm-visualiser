@@ -1,5 +1,6 @@
 package calebowusuyianoma.sortalgovisualiser;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -13,83 +14,56 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 import static java.util.Collections.max;
 
 public class MainPanel extends JPanel implements ActionListener {
+    private final int defaultArraySize, minimumPossibleValue, maximumPossibleValue;
     private final int timerDelayMultiplier = 5000;
     private final int spaceBetweenBars = 5;
-    private final String[] validSortingAlgorithms = new String[] {BubbleSort.getName(), InsertionSort.getName(),
-            MergeSort.getName(), TimSort.getName()};
+    private final String defaultSortingAlgorithmRunningText = "No sorting algorithm is running";
+    private final OptionPane optionPane;
     private final Timer timer = new Timer(100, this);
     private final JSlider sortingSpeedSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
     private final JLabel runningTimeLabel = new JLabel("Running time: ");
+    private final String[] validSortingAlgorithms = new String[] {BubbleSort.getName(), InsertionSort.getName(),
+            MergeSort.getName(), TimSort.getName()};
 
     private long startTime, endTime, runningTime;
     private boolean sorting, sortingAlgorithmJustRan;
-    private String sortingAlgorithmRunning = "";
+    private String sortingAlgorithmRunning = defaultSortingAlgorithmRunningText;
     private String sortingAlgorithmSelected;
     private ArrayList<Integer> data, preSortedData;
-    private BubbleSort bubbleSort = new BubbleSort();
-    private InsertionSort insertionSort = new InsertionSort();
-    private MergeSort mergeSort = new MergeSort();
-    private TimSort timSort = new TimSort();
+    private SortVisualiser sortVisualiser;
+    private JSpinner arraySizeSpinner;
+    private JLabel arraySizeSpinnerLabel;
+    private JButton generateArrayButton, sortButton, undoSortButton;
+    private JComboBox<String> sortingAlgorithmsList;
+    private JPanel sortingSpeedSliderPanel;
 
-    public MainPanel() {
-        int defaultArraySize = 10;
-        int minimumPossibleValue = 1;
-        int maximumPossibleValue = 100;
+    public MainPanel(OptionPane optionPane, int defaultArraySize, int minimumPossibleValue, int maximumPossibleValue) {
+        this.optionPane = optionPane;
+        this.defaultArraySize = defaultArraySize;
+        this.minimumPossibleValue = minimumPossibleValue;
+        this.maximumPossibleValue = maximumPossibleValue;
+
         data = ArrayGenerator.generateRandomPositiveIntegerArray(defaultArraySize, minimumPossibleValue,
                 maximumPossibleValue);
         setPreSortedData();
 
-        JLabel arraySizeSpinnerLabel = new JLabel("Array size: ");
-        SpinnerModel spinnerModel = new SpinnerNumberModel(defaultArraySize, 2, 200, 1);
-        JSpinner arraySizeSpinner = new JSpinner(spinnerModel);
-        arraySizeSpinnerLabel.setLabelFor(arraySizeSpinner);
-
-        JButton generateArrayButton = new JButton("Generate random array");
-        generateArrayButton.addActionListener(e -> {
-            if (!sorting) {
-                int arraySize = (int) arraySizeSpinner.getValue();
-                data = ArrayGenerator.generateRandomPositiveIntegerArray(arraySize, minimumPossibleValue,
-                        maximumPossibleValue);
-                setPreSortedData();
-                sortingAlgorithmJustRan = false;
-                resetRunningTime();
-                repaint();
-            }
-        });
-
-        String defaultSortingAlgorithmsListText = "Select a sorting algorithm";
-        sortingAlgorithmSelected = defaultSortingAlgorithmsListText;
-
-        String[] sortingAlgorithmsListText = new String[] {defaultSortingAlgorithmsListText, BubbleSort.getName(),
-                InsertionSort.getName(), MergeSort.getName(), TimSort.getName()};
-        JComboBox<String> sortingAlgorithmsList = new JComboBox<>(sortingAlgorithmsListText);
-        sortingAlgorithmsList.setSelectedIndex(0);
-        sortingAlgorithmsList.addActionListener(e ->
-                sortingAlgorithmSelected = (String) sortingAlgorithmsList.getSelectedItem());
-
-        SortingSpeedSliderPanel sortingSpeedSliderPanel = new SortingSpeedSliderPanel(sortingSpeedSlider);
-        sortingSpeedSliderPanel.setSliderPanelListener(this::respondToSortingSpeedSliderChange);
-
-        JButton sortButton = new JButton("Sort");
-        sortButton.addActionListener(this);
-
-        JButton undoSortButton = new JButton("Undo sort");
-        undoSortButton.addActionListener(e -> {
-            if (!sorting) {
-                respondToUndoSortButtonClick();
-            }
-        });
+        createArraySizeSpinner();
+        createGenerateArrayButton();
+        createSortingAlgorithmsList();
+        createSortingSpeedSliderPanel();
+        createSortButton();
+        createUndoSortButton();
 
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(1000, 70));
@@ -110,6 +84,28 @@ public class MainPanel extends JPanel implements ActionListener {
         preSortedData = new ArrayList<>(data);
     }
 
+    private void createArraySizeSpinner() {
+        arraySizeSpinnerLabel = new JLabel("Array size: ");
+        SpinnerModel spinnerModel = new SpinnerNumberModel(defaultArraySize, 2, 200, 1);
+        arraySizeSpinner = new JSpinner(spinnerModel);
+        arraySizeSpinnerLabel.setLabelFor(arraySizeSpinner);
+    }
+
+    private void createGenerateArrayButton() {
+        generateArrayButton = new JButton("Generate random array");
+        generateArrayButton.addActionListener(e -> {
+            if (!sorting) {
+                int arraySize = (int) arraySizeSpinner.getValue();
+                data = ArrayGenerator.generateRandomPositiveIntegerArray(arraySize, minimumPossibleValue,
+                        maximumPossibleValue);
+                setPreSortedData();
+                sortingAlgorithmJustRan = false;
+                resetRunningTime();
+                repaint();
+            }
+        });
+    }
+
     private void resetRunningTime() {
         runningTime = 0;
         setRunningTimeLabel();
@@ -121,6 +117,51 @@ public class MainPanel extends JPanel implements ActionListener {
         runningTimeLabel.setText(text);
     }
 
+    private void createSortingAlgorithmsList() {
+        String defaultSortingAlgorithmsListText = "Select a sorting algorithm";
+        sortingAlgorithmSelected = defaultSortingAlgorithmsListText;
+
+        String[] sortingAlgorithmsListText = new String[] {defaultSortingAlgorithmsListText, BubbleSort.getName(),
+                InsertionSort.getName(), MergeSort.getName(), TimSort.getName()};
+        sortingAlgorithmsList = new JComboBox<>(sortingAlgorithmsListText);
+        sortingAlgorithmsList.setSelectedIndex(0);
+        sortingAlgorithmsList.addActionListener(e ->
+                sortingAlgorithmSelected = (String) sortingAlgorithmsList.getSelectedItem());
+    }
+
+    private void createSortingSpeedSliderPanel() {
+        sortingSpeedSliderPanel = new JPanel();
+        sortingSpeedSliderPanel.setLayout(new BoxLayout(sortingSpeedSliderPanel, BoxLayout.PAGE_AXIS));
+
+        JLabel sortingSpeedSliderLabel = new JLabel("Sorting speed");
+        sortingSpeedSliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        sortingSpeedSlider.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sortingSpeedSlider.setMajorTickSpacing(50);
+        sortingSpeedSlider.setMinorTickSpacing(10);
+        sortingSpeedSlider.setPaintTicks(true);
+        sortingSpeedSlider.setPaintLabels(true);
+        sortingSpeedSlider.setVisible(true);
+        sortingSpeedSlider.addChangeListener(this::respondToSortingSpeedSliderChange);
+
+        sortingSpeedSliderPanel.add(sortingSpeedSliderLabel);
+        sortingSpeedSliderPanel.add(sortingSpeedSlider);
+    }
+
+    private void createSortButton() {
+        sortButton = new JButton("Sort");
+        sortButton.addActionListener(this);
+    }
+
+    private void createUndoSortButton() {
+        undoSortButton = new JButton("Undo sort");
+        undoSortButton.addActionListener(e -> {
+            if (!sorting) {
+                respondToUndoSortButtonClick();
+            }
+        });
+    }
+
     private void respondToSortingSpeedSliderChange(ChangeEvent e) {
         if (!sorting) return;
 
@@ -130,9 +171,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int sortingSpeed = source.getValue();
         if (sortingSpeed == 0) {
             timer.stop();
-            long currentTime = System.currentTimeMillis();
-            runningTime += currentTime - startTime;
-            startTime = 0;
+            updateRunningTime();
         } else {
             int delay = timerDelayMultiplier / sortingSpeed;
             timer.setDelay(delay);
@@ -141,6 +180,12 @@ public class MainPanel extends JPanel implements ActionListener {
                 startTime = System.currentTimeMillis();
             }
         }
+    }
+
+    private void updateRunningTime() {
+        long currentTime = System.currentTimeMillis();
+        runningTime += currentTime - startTime;
+        startTime = 0;
     }
 
     private void respondToUndoSortButtonClick() {
@@ -159,54 +204,30 @@ public class MainPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (sorting) {
-            switch (mapSortingAlgorithmStringToEnum(sortingAlgorithmRunning)) {
-                case BUBBLESORT:
-                    respondToAction(e, bubbleSort);
-                    break;
-                case INSERTIONSORT:
-                    respondToAction(e, insertionSort);
-                    break;
-                case MERGESORT:
-                    respondToAction(e, mergeSort);
-                    break;
-                case TIMSORT:
-                    respondToAction(e, timSort);
-                    break;
-                case UNKNOWN:
-                default:
-                    throw new IllegalStateException("Action performed while running unknown sorting algorithm: " +
-                            sortingAlgorithmRunning);
-            }
+        if (e == null) {
+            throw new IllegalArgumentException("ActionEvent should not be null");
+        } else if (sorting) {
+            continueRunningVisualisation(e);
         } else if (Arrays.asList(validSortingAlgorithms).contains(sortingAlgorithmSelected)) {
             runSortingAlgorithm();
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a sorting algorithm!");
+            optionPane.showMessageDialog(this, "Please select a sorting algorithm!");
         }
     }
 
-    private SortingAlgorithm mapSortingAlgorithmStringToEnum(String sortingAlgorithm) {
-        if (sortingAlgorithm.equals(BubbleSort.getName())) return SortingAlgorithm.BUBBLESORT;
-        if (sortingAlgorithm.equals(InsertionSort.getName())) return SortingAlgorithm.INSERTIONSORT;
-        if (sortingAlgorithm.equals(MergeSort.getName())) return SortingAlgorithm.MERGESORT;
-        if (sortingAlgorithm.equals(TimSort.getName())) return SortingAlgorithm.TIMSORT;
-
-        return SortingAlgorithm.UNKNOWN;
-    }
-
-    private void respondToAction(ActionEvent e, Sort sort) {
+    private void continueRunningVisualisation(ActionEvent e) {
         if (sortButtonClickedWhenSortingSpeedIsZero(e)) {
             JOptionPane.showMessageDialog(this, "The sorting speed is 0!");
 
             return;
-        } else if (sort.isSorted()) {
+        } else if (sortVisualiser.isSorted()) {
             timer.stop();
-            updateFinalRunningTime();
+            calculateFinalRunningTime();
             resetVariablesAfterSorting();
             setRunningTimeLabel();
-            sort.setRunning(false);
+            sortVisualiser.setRunning(false);
         } else {
-            sort.moveToNextStep(data);
+            sortVisualiser.moveToNextStep(data);
         }
 
         repaint();
@@ -220,7 +241,7 @@ public class MainPanel extends JPanel implements ActionListener {
         return (e.getActionCommand() != null) && (e.getActionCommand().equals("Sort"));
     }
 
-    private void updateFinalRunningTime() {
+    private void calculateFinalRunningTime() {
         endTime = System.currentTimeMillis();
         runningTime += endTime - startTime;
     }
@@ -229,7 +250,7 @@ public class MainPanel extends JPanel implements ActionListener {
         startTime = 0;
         endTime = 0;
         sorting = false;
-        sortingAlgorithmRunning = null;
+        sortingAlgorithmRunning = defaultSortingAlgorithmRunningText;
         sortingAlgorithmJustRan = true;
     }
 
@@ -241,37 +262,31 @@ public class MainPanel extends JPanel implements ActionListener {
             return;
         }
 
-        Sort sort = initialiseSortingAlgorithm();
-        sort.setSorted(false);
+        setSortVisualiser();
         startTimerBeforeSorting(sortingSpeedSliderValue);
-        resetVariablesBeforeSorting();
+        sorting = true;
+        sortingAlgorithmRunning = sortingAlgorithmSelected;
+        sortingAlgorithmJustRan = false;
         resetRunningTime();
-        sort.moveToNextStep(data);
+        startTime = System.currentTimeMillis();
+        sortVisualiser.moveToNextStep(data);
         repaint();
     }
 
-    private Sort initialiseSortingAlgorithm() {
+    private void setSortVisualiser() {
         switch (mapSortingAlgorithmStringToEnum(sortingAlgorithmSelected)) {
             case BUBBLESORT:
-                sortingAlgorithmRunning = sortingAlgorithmSelected;
-                bubbleSort = new BubbleSort();
-
-                return bubbleSort;
+                sortVisualiser = new BubbleSortVisualiser(spaceBetweenBars);
+                break;
             case INSERTIONSORT:
-                sortingAlgorithmRunning = sortingAlgorithmSelected;
-                insertionSort = new InsertionSort();
-
-                return insertionSort;
+                sortVisualiser = new InsertionSortVisualiser(spaceBetweenBars);
+                break;
             case MERGESORT:
-                sortingAlgorithmRunning = sortingAlgorithmSelected;
-                mergeSort = new MergeSort();
-
-                return mergeSort;
+                sortVisualiser = new MergeSortVisualiser(spaceBetweenBars);
+                break;
             case TIMSORT:
-                sortingAlgorithmRunning = sortingAlgorithmSelected;
-                timSort = new TimSort();
-
-                return timSort;
+                sortVisualiser = new TimSortVisualiser(spaceBetweenBars);
+                break;
             case UNKNOWN:
             default:
                 throw new IllegalStateException("Tried to initialise an unrecognised sorting algorithm: " +
@@ -279,19 +294,26 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
+    private SortingAlgorithm mapSortingAlgorithmStringToEnum(String sortingAlgorithm) {
+        if (sortingAlgorithm.equals(BubbleSort.getName())) return SortingAlgorithm.BUBBLESORT;
+        if (sortingAlgorithm.equals(InsertionSort.getName())) return SortingAlgorithm.INSERTIONSORT;
+        if (sortingAlgorithm.equals(MergeSort.getName())) return SortingAlgorithm.MERGESORT;
+        if (sortingAlgorithm.equals(TimSort.getName())) return SortingAlgorithm.TIMSORT;
+
+        return SortingAlgorithm.UNKNOWN;
+    }
+
     private void startTimerBeforeSorting(int sortingSpeedSliderValue) {
         timer.setDelay(timerDelayMultiplier / sortingSpeedSliderValue);
         timer.start();
     }
 
-    private void resetVariablesBeforeSorting() {
-        startTime = System.currentTimeMillis();
-        sorting = true;
-        sortingAlgorithmJustRan = false;
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
+        if (g == null) {
+            throw new IllegalArgumentException("Graphics object should not be null");
+        }
+
         super.paintComponent(g);
 
         int xCoordinate = 5;
@@ -300,7 +322,7 @@ public class MainPanel extends JPanel implements ActionListener {
         int maxArrayValue = max(data);
 
         if (sorting) {
-            paintComponentForSortingAlgorithm(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
+            sortVisualiser.paint(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth, data);
         } else {
             if (sortingAlgorithmJustRan) {
                 g.setColor(Color.MAGENTA);
@@ -315,170 +337,21 @@ public class MainPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void paintComponentForSortingAlgorithm(Graphics g, int maxArrayValue, int maxBarHeight,
-                                                   int xCoordinate, int barWidth) {
-
-        switch (mapSortingAlgorithmStringToEnum(sortingAlgorithmRunning)) {
-            case BUBBLESORT:
-                paintComponentForBubbleSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-                break;
-            case INSERTIONSORT:
-                paintComponentForInsertionSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-                break;
-            case MERGESORT:
-                paintComponentForMergeSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-                break;
-            case TIMSORT:
-                paintComponentForTimSort(g, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-                break;
-            case UNKNOWN:
-            default:
-                throw new IllegalStateException("Tried to paint component for an unrecognised sorting algorithm: " +
-                        sortingAlgorithmSelected);
-        }
-    }
-
-    private void paintComponentForBubbleSort(Graphics g, int maxArrayValue, int maxBarHeight,
-                                             int xCoordinate, int barWidth) {
-
-        int[] forLoopVariables = bubbleSort.getForLoopVariables();
-        for (int i = 0; i < data.size(); i++) {
-            if (bubbleSort.isSorted()) {
-                g.setColor(Color.MAGENTA);
-            } else if (bubbleSort.isRunning() && contains(forLoopVariables, i)) {
-                g.setColor(Color.CYAN);
-            } else {
-                g.setColor(Color.BLACK);
-            }
-
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-            xCoordinate += (barWidth + spaceBetweenBars);
-        }
-    }
-
     private void fillRectangle(Graphics g, int index, int maxValue, int maxBarHeight, int xCoordinate, int width) {
         int height = (int) (((double) data.get(index) / maxValue) * maxBarHeight);
         g.fillRect(xCoordinate, 0, width, height);
     }
 
-    private boolean contains(int[] arr, final int key) {
-        return Arrays.stream(arr).anyMatch(i -> i == key);
+    public String getSortingAlgorithmRunning() {
+        return sortingAlgorithmRunning;
     }
 
-    private void paintComponentForInsertionSort(Graphics g, int maxArrayValue, int maxBarHeight,
-                                                int xCoordinate, int barWidth) {
-
-        int keyIndex = insertionSort.getKeyIndex();
-        int key = insertionSort.getKey();
-        for (int i = 0; i < data.size(); i++) {
-            if (i < keyIndex) {
-                g.setColor(Color.ORANGE);
-            } else if (i == keyIndex) {
-                if (data.get(i) == key) {
-                    g.setColor(Color.CYAN);
-                } else {
-                    g.setColor(Color.ORANGE);
-                }
-            } else {
-                g.setColor(Color.BLACK);
-            }
-
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-            xCoordinate += (barWidth + spaceBetweenBars);
-        }
+    public boolean isSorting() {
+        return sorting;
     }
 
-    private void paintComponentForMergeSort(Graphics g, int maxArrayValue, int maxBarHeight,
-                                            int xCoordinate, int barWidth) {
-
-        int currentTreeNode = mergeSort.getCurrentTreeNode();
-        Map<String, Integer> currentTreeNodePointerMap = mergeSort.getTreeNodePointerMaps().get(currentTreeNode);
-        Map<Integer, Boolean> sortedTreeNodes = mergeSort.getSortedTreeNodes();
-        for (int i = 0; i < data.size(); i++) {
-            if (mergeSort.isSorted()) {
-                g.setColor(Color.MAGENTA);
-            } else if (sortedTreeNodes.containsKey(currentTreeNode)) {
-                if (currentElementIsInSubArrayThatWasJustSorted(currentTreeNodePointerMap, i)) {
-                    g.setColor(Color.MAGENTA);
-                } else {
-                    g.setColor(Color.BLACK);
-                }
-            } else if (currentTreeNodePointerMap.containsValue(i)) {
-                if (currentElementCorrespondsToMultiplePointers(currentTreeNodePointerMap, i)) {
-                    g.setColor(Color.GREEN);
-                } else if (currentElementOnlyCorrespondsToMiddlePointer(currentTreeNodePointerMap, i)) {
-                    g.setColor(Color.YELLOW);
-                } else {
-                    g.setColor(Color.CYAN);
-                }
-            } else {
-                g.setColor(Color.BLACK);
-            }
-
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-            xCoordinate += (barWidth + spaceBetweenBars);
-        }
-    }
-
-    private boolean currentElementIsInSubArrayThatWasJustSorted(Map<String, Integer> currentTreeNodePointerMap,
-                                                                int index) {
-
-        return (currentTreeNodePointerMap.get(MergeSort.getLow()) <= index) &&
-                (currentTreeNodePointerMap.get(MergeSort.getHigh()) >= index);
-    }
-
-    private boolean currentElementCorrespondsToMultiplePointers(Map<String, Integer> currentTreeNodePointerMap,
-                                                                int index) {
-
-        return (currentTreeNodePointerMap.get(MergeSort.getLow()) == index ||
-                currentTreeNodePointerMap.get(MergeSort.getHigh()) == index) &&
-                (currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index);
-    }
-
-    private boolean currentElementOnlyCorrespondsToMiddlePointer(Map<String, Integer> currentTreeNodePointerMap,
-                                                                 int index) {
-
-        return currentTreeNodePointerMap.get(MergeSort.getMiddle()) == index;
-    }
-
-    private void paintComponentForTimSort(Graphics g, int maxArrayValue, int maxBarHeight,
-                                          int xCoordinate, int barWidth) {
-
-        int left = timSort.getLeft();
-        int keyIndex = timSort.getKeyIndex();
-        int key = timSort.getKey();
-        int previousMergeStartIndex = timSort.getPreviousMergeStartIndex();
-        int mergeEndIndex = timSort.getMergeEndIndex();
-        boolean runningInsertionSort = timSort.isRunningInsertionSort();
-        for (int i = 0; i < data.size(); i++) {
-            if (timSort.isSorted()) {
-                g.setColor(Color.MAGENTA);
-            } else if (runningInsertionSort && currentElementIsPartOfSortedInsertionSortSubArray(i, left, keyIndex)) {
-                g.setColor(Color.ORANGE);
-            } else if (runningInsertionSort && i == keyIndex) {
-                if (data.get(i) == key) {
-                    g.setColor(Color.CYAN);
-                } else {
-                    g.setColor(Color.ORANGE);
-                }
-            } else if (!runningInsertionSort && currentElementIsBeingMerged(i, previousMergeStartIndex, mergeEndIndex)) {
-                g.setColor(Color.ORANGE);
-            } else {
-                g.setColor(Color.BLACK);
-            }
-
-            fillRectangle(g, i, maxArrayValue, maxBarHeight, xCoordinate, barWidth);
-            xCoordinate += (barWidth + spaceBetweenBars);
-        }
-    }
-
-    private boolean currentElementIsPartOfSortedInsertionSortSubArray(int index, int left, int keyIndex) {
-        return (index >= left) && (index < keyIndex);
-    }
-
-    private boolean currentElementIsBeingMerged(int index, int mergeStartIndex, int mergeEndIndex) {
-
-        return (index >= mergeStartIndex) && (index <= mergeEndIndex);
+    public ArrayList<Integer> getData() {
+        return data;
     }
 
     public void setSorting(boolean sorting) {
@@ -487,17 +360,29 @@ public class MainPanel extends JPanel implements ActionListener {
 
     public void setSortingAlgorithmRunning(String sortingAlgorithmRunning) {
         if (sortingAlgorithmRunning == null) {
-            throw new IllegalArgumentException("Cannot assign null to sortingAlgorithmRunning text");
+            throw new IllegalArgumentException("sortingAlgorithmRunning cannot be null");
         }
 
         this.sortingAlgorithmRunning = sortingAlgorithmRunning;
     }
 
-    public Sort getBubbleSort() {
-        return bubbleSort;
+    public void setSortingAlgorithmSelected(String sortingAlgorithmSelected) {
+        if (sortingAlgorithmSelected == null) {
+            throw new IllegalArgumentException("sortingAlgorithmSelected cannot be null");
+        }
+
+        this.sortingAlgorithmSelected = sortingAlgorithmSelected;
     }
 
-    public boolean isSorting() {
-        return sorting;
+    public void setSortingAlgorithmJustRan(boolean justRan) {
+        sortingAlgorithmJustRan = justRan;
+    }
+
+    public void setSortVisualiser(SortVisualiser sortVisualiser) {
+        if (sortVisualiser == null) {
+            throw new IllegalArgumentException("Sort visualiser cannot be null");
+        }
+
+        this.sortVisualiser = sortVisualiser;
     }
 }

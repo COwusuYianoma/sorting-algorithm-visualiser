@@ -7,7 +7,7 @@ public class BubbleSort {
 
     public void sort(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         for (int i = 0; i < data.size() - 1; i++) {
@@ -21,7 +21,7 @@ public class BubbleSort {
 
     public void swap(ArrayList<Integer> data, int key) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         if ((key < 0) || (key > data.size() - 1)) {

@@ -10,7 +10,7 @@ public class TimSort {
 
     public void sort(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         int n = data.size();

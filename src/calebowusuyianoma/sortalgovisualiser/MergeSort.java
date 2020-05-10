@@ -7,7 +7,7 @@ public class MergeSort {
 
     public void sort(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         sort(data, 0, data.size() - 1);
@@ -24,7 +24,7 @@ public class MergeSort {
 
     public void merge(ArrayList<Integer> data, int lowIndex, int middleIndex, int highIndex) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         // The third condition may occur when timsort calls merge()

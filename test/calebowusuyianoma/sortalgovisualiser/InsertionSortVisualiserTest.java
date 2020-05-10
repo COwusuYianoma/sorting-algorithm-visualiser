@@ -33,7 +33,7 @@ class InsertionSortVisualiserTest {
     public void moveToNextStepThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expected = "The data should contain at least one element, but it is null";
+        String expected = "The data should not be null";
 
         // Act
         Exception exception = assertThrows(IllegalArgumentException.class, () ->

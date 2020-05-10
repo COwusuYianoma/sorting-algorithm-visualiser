@@ -30,7 +30,7 @@ public class MergeSortVisualiser implements SortVisualiser {
     @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         } else if (data.size() <= 1) {
             sorted = true;
         } else if (!running) {
@@ -237,35 +237,35 @@ public class MergeSortVisualiser implements SortVisualiser {
 
     public void setCurrentPointerMap(Map<String, Integer> map) {
         if (map == null) {
-            throw new IllegalArgumentException("Cannot assign null to map");
+            throw new IllegalArgumentException("The map should not be null");
         }
         currentPointerMap = map;
     }
 
     public void setParentNodes(Map<Integer, Integer> parentNodes) {
         if (parentNodes == null) {
-            throw new IllegalArgumentException("Cannot assign null to map");
+            throw new IllegalArgumentException("The map should not be null");
         }
         this.parentNodes = parentNodes;
     }
 
     public void setSortedTreeNodes(Map<Integer, Boolean> map) {
         if (map == null) {
-            throw new IllegalArgumentException("Cannot assign null to map");
+            throw new IllegalArgumentException("The map should not be null");
         }
         sortedTreeNodes = map;
     }
 
     public void setNumberOfSortedChildrenMap(Map<Integer, Integer> map) {
         if (map == null) {
-            throw new IllegalArgumentException("Cannot assign null to map");
+            throw new IllegalArgumentException("The map should not be null");
         }
         numberOfSortedChildrenMap = map;
     }
 
     public void setTreeNodePointerMaps(Map<Integer, Map<String, Integer>> map) {
         if (map == null) {
-            throw new IllegalArgumentException("Cannot assign null to map");
+            throw new IllegalArgumentException("The map should not be null");
         }
         treeNodePointerMaps = map;
     }

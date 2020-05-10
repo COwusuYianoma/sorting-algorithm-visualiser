@@ -360,7 +360,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
     public void setSortingAlgorithmRunning(String sortingAlgorithmRunning) {
         if (sortingAlgorithmRunning == null) {
-            throw new IllegalArgumentException("sortingAlgorithmRunning cannot be null");
+            throw new IllegalArgumentException("sortingAlgorithmRunning should not be null");
         }
 
         this.sortingAlgorithmRunning = sortingAlgorithmRunning;
@@ -368,7 +368,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
     public void setSortingAlgorithmSelected(String sortingAlgorithmSelected) {
         if (sortingAlgorithmSelected == null) {
-            throw new IllegalArgumentException("sortingAlgorithmSelected cannot be null");
+            throw new IllegalArgumentException("sortingAlgorithmSelected should not be null");
         }
 
         this.sortingAlgorithmSelected = sortingAlgorithmSelected;
@@ -380,7 +380,7 @@ public class MainPanel extends JPanel implements ActionListener {
 
     public void setSortVisualiser(SortVisualiser sortVisualiser) {
         if (sortVisualiser == null) {
-            throw new IllegalArgumentException("Sort visualiser cannot be null");
+            throw new IllegalArgumentException("Sort visualiser should not be null");
         }
 
         this.sortVisualiser = sortVisualiser;

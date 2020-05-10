@@ -19,7 +19,7 @@ public class BubbleSortVisualiser implements SortVisualiser {
     @Override
     public void moveToNextStep(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         } else if (data.size() <= 1) {
             setSorted(true);
         } else if (!running) {

@@ -20,7 +20,7 @@ class InsertionSortTest {
     public void sortThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expected = "The data should contain at least one element, but it is null";
+        String expected = "The data should not be null";
 
         // Act
         Exception exception = assertThrows(IllegalArgumentException.class, () -> insertionSort.sort(data));
@@ -33,7 +33,7 @@ class InsertionSortTest {
     public void sortWithIndicesThrowsExceptionWhenDataIsNull() {
         // Arrange
         data = null;
-        String expected = "The data should contain at least one element, but it is null";
+        String expected = "The data should not be null";
 
         // Act
         Exception exception = assertThrows(IllegalArgumentException.class, () ->

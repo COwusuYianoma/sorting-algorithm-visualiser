@@ -7,7 +7,7 @@ public class InsertionSort {
 
     public void sort(ArrayList<Integer> data) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         if ((data.isEmpty()) || (data.size() == 1)) {
@@ -19,7 +19,7 @@ public class InsertionSort {
 
     public void sort(ArrayList<Integer> data, int left, int right) {
         if (data == null) {
-            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+            throw new IllegalArgumentException("The data should not be null");
         }
 
         if ((data.isEmpty()) || (data.size() == 1)) {

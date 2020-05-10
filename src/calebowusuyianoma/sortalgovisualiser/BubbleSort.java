@@ -2,39 +2,14 @@ package calebowusuyianoma.sortalgovisualiser;
 
 import java.util.ArrayList;
 
-public class BubbleSort extends Sort {
-    public static final String NAME = "Bubblesort";
-
-    private boolean justRanSwap;
-    private int i = 0, j = 0;
-
-    public int[] getPointers() {
-        return new int[] {i, j};
-    }
-
-    public boolean justRanSwap() {
-        return justRanSwap;
-    }
-
-    public void moveToNextStep(ArrayList<Integer> data) {
-        if (!running() && j == 0) {
-            j = data.size() - 1;
-            setRunning(true);
-        } else if (j > i + 1) {
-            j--;
-            justRanSwap = false;
-        } else if (i < data.size() - 1) {
-            i++;
-            j = data.size() - 1;
-            justRanSwap = false;
-        } else {
-            setSorted(true);
-            i = 0;
-            j = 0;
-        }
-    }
+public class BubbleSort {
+    private static final String NAME = "Bubblesort";
 
     public void sort(ArrayList<Integer> data) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
+        }
+
         for (int i = 0; i < data.size() - 1; i++) {
             for (int j = data.size() - 1; j > i; j--) {
                 if (data.get(j) < data.get(j - 1)) {
@@ -44,16 +19,22 @@ public class BubbleSort extends Sort {
         }
     }
 
-    public void swap(ArrayList<Integer> data) {
-        if (data.get(j) < data.get(j - 1)) {
-            swap(data, j);
+    public void swap(ArrayList<Integer> data, int key) {
+        if (data == null) {
+            throw new IllegalArgumentException("The data should contain at least one element, but it is null");
         }
-        justRanSwap = true;
+
+        if ((key < 0) || (key > data.size() - 1)) {
+            throw new IllegalArgumentException("The key should be a valid index of the array, but key is " +
+                    key + " and the array has size " + data.size());
+        }
+
+        int temp = data.get(key);
+        data.set(key, data.get(key - 1));
+        data.set(key - 1, temp);
     }
 
-    private void swap(ArrayList<Integer> data, int index) {
-        int temp = data.get(index);
-        data.set(index, data.get(index - 1));
-        data.set(index - 1, temp);
+    public static String getName() {
+        return NAME;
     }
 }

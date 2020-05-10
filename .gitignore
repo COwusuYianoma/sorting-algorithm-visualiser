@@ -3,4 +3,5 @@
 /workspace.xml
 /.idea
 /out
+/test/lib
 *.iml

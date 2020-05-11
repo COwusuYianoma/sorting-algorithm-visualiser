@@ -17,7 +17,7 @@ The aim of this visualiser is to help users better understand how each algorithm
 
 To run the application, you need the [Java Runtime Environment](https://java.com/en/download/win10.jsp) installed on your machine.
 
-The quickest way to run it is to download and run the [jar file](release/SortingAlgoVisualiser.jar). Alternatively, you can fork the project and build and run the code from your favourite IDE or shell. 
+The quickest way to run it is to download and run the [jar file](SortingAlgoVisualiser.jar). Alternatively, you can fork the project and build and run the code from your favourite IDE or shell. 
 
 The application visualises the sorting of random integer arrays, with a default size of 10. You can generate a new array containing between 2 and 200 elements. Select a sorting algorithm from the drop-down list, set the sorting speed and then click 'Sort'. You can adjust the sorting speed as the algorithm runs and you can undo the sort when it has finished. 
 
@@ -27,7 +27,7 @@ Once the array has been sorted, the running time will be displayed. This is an i
 * [Tim Peters' description of timsort](https://svn.python.org/projects/python/trunk/Objects/listsort.txt).
   
 ### Animation  
-![Sorting animation](media/Sorting_animation.gif)
+![Sorting animation](Sorting_animation.gif)
 
 ## How can I contribute?
 

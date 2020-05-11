@@ -39,7 +39,9 @@ Contributions are welcome! To contribute, please follow the process below:
     * Follow the current coding style.
     * Include tests when adding a new feature or sorting algorithm visualisation.
 * Build the repo with your changes, and ensure that the tests pass and the visualisations run correctly.
-* Create a pull request (PR) against the repo's **master** branch.
+* Create a pull request (PR) against the repo's **master** branch:
+    * Add a title that summarises the changes.
+    * In the description, list the main changes.
 * Wait for feedback or approval of your changes.
 * When your changes have been approved, the PR will be merged.
 

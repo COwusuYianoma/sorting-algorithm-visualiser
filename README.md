@@ -35,10 +35,11 @@ Contributions are welcome! To contribute, please follow the process below:
 
 * Create a personal fork of this GitHub repo.
 * In your fork, create a branch off the **master** branch.
-* Make and commit your changes to your branch, keeping the following in mind:
+* Make your changes on your branch, keeping the following in mind:
     * Follow the current coding style.
     * Include tests when adding a new feature or sorting algorithm visualisation.
 * Build the repo with your changes, and ensure that the tests pass and the visualisations run correctly.
+* Commit your changes to your branch.
 * Create a pull request (PR) against the repo's **master** branch:
     * Add a title that summarises the changes.
     * In the description, list the main changes.

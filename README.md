@@ -1,6 +1,6 @@
 # Sorting Algorithm Visualiser
 
-Sorting algorithm visualisations using Java and Swing
+Sorting algorithm visualisations built using Java
 
 ## What is this?
 
